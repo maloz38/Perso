@@ -1,0 +1,12 @@
+{
+  "bannerColor": "#263238",
+  "primaryColor": "#37474f",
+  "backgroundPageColor": "#263238",
+  "cardsColor": "#455a64",
+  "accentColor": "#4caf50",
+  "buttonColor": "#66bb6a",
+  "textColor": "#ffffff",
+  "borderRadius": 6,
+  "shadowSize": 10,
+  "iconSize": 64
+}

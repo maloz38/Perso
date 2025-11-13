@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de raccourcis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestionnaire de raccourcis</h1>
+            <div class="header-controls">
+                <div class="left-controls">
+                    <button id="toggleFormBtn" class="btn">Ajouter un raccourci</button>
+                    <button id="toggleViewBtn" class="btn">Mode Liste</button>
+                    <div class="sort-dropdown">
+                        <button id="sortBtn" class="btn">Trier ▼</button>
+                        <div id="sortMenu" class="sort-menu hidden">
+                            <button data-sort="az">A → Z</button>
+                            <button data-sort="za">Z → A</button>
+                            <button data-sort="recent">Récemment ouvert</button>
+                            <button data-sort="custom">Pertinence</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-controls">
+                    <button id="toggleSettingsBtn" class="btn btn-icon" title="Paramètres">⚙️</button>
+                    <button id="toggleStyleBtn" class="btn">Personnaliser</button>
+                </div>
+            </div>
+
+            <!-- Panneau de style -->
+            <div id="stylePanel" class="style-panel hidden">
+                <form id="styleForm">
+                    <h3>Personnalisation</h3>
+                    
+                    <div class="style-section">
+                        <label>Thème prédéfini</label>
+                        <select id="presetTheme">
+                            <option value="default">Par défaut</option>
+                            <option value="modern">Moderne</option>
+                            <option value="soft">Arrondi nuage</option>
+                            <option value="sharp">Angles vifs</option>
+                            <option value="dark">Sombre</option>
+                        </select>
+                    </div>
+
+                    <div class="style-section">
+                        <label>Couleurs</label>
+                        <div class="color-picker">
+                            <label>Bannière:</label>
+                            <input type="color" id="bannerColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Fond contenu:</label>
+                            <input type="color" id="primaryColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Fond page:</label>
+                            <input type="color" id="backgroundPageColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Cartes:</label>
+                            <input type="color" id="cardsColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Boutons:</label>
+                            <input type="color" id="buttonColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Accent:</label>
+                            <input type="color" id="accentColor">
+                        </div>
+                        <div class="color-picker">
+                            <label>Texte:</label>
+                            <input type="color" id="textColor">
+                        </div>
+                    </div>
+
+                    <div class="style-section">
+                        <label>Style des cartes</label>
+                        <div class="range-slider">
+                            <label>Arrondi:</label>
+                            <input type="number" id="borderRadius" min="0" max="50" value="4">
+                        </div>
+                        <div class="range-slider">
+                            <label>Ombre:</label>
+                            <input type="number" id="shadowSize" min="0" max="50" value="10">
+                        </div>
+                        <div class="range-slider">
+                            <label>Taille icônes:</label>
+                            <input type="number" id="iconSize" min="32" max="256" value="64">
+                        </div>
+                    </div>
+
+                    <div class="themes-section">
+                        <h4>Thèmes sauvegardés</h4>
+                        <div class="save-theme">
+                            <input type="text" id="themeName" placeholder="Nom du thème">
+                            <button type="button" id="saveTheme" class="btn">Sauvegarder</button>
+                        </div>
+                        <div id="savedThemes" class="saved-themes">
+                            <!-- Les thèmes sauvegardés seront ajoutés ici -->
+                        </div>
+                    </div>
+
+                    <div class="style-actions">
+                        <button type="button" id="applyStyle" class="btn primary">Appliquer</button>
+                        <button type="button" id="closeStyle" class="btn">Fermer</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Panneau de paramètres -->
+            <div id="settingsPanel" class="style-panel hidden">
+                <h3>⚙️ Paramètres</h3>
+                
+                <div class="settings-section">
+                    <h4>Affichage</h4>
+                    <label>
+                        <input type="checkbox" id="confirmDelete" checked>
+                        Confirmer avant suppression
+                    </label>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Comportement</h4>
+                    <label>
+                        <input type="checkbox" id="confirmDelete" checked>
+                        Confirmer avant suppression
+                    </label>
+                </div>
+
+                <div class="style-actions">
+                    <button type="button" id="closeSettings" class="btn">Fermer</button>
+                </div>
+            </div>
+        </header>
+
+        <div id="shortcutForm" class="form-container hidden">
+            <form id="addShortcutForm">
+                <div class="form-grid">
+                    <div class="form-fields">
+                        <div class="form-group">
+                            <label for="name">Nom *</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="path">Chemin du fichier *</label>
+                            <div class="input-with-button">
+                                <input type="text" id="path" required readonly>
+                                <button type="button" id="browseFile" class="btn">Parcourir</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="folder">Dossier</label>
+                            <select id="folder">
+                                <option value="">Racine</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="iconPath">Icône (optionnel)</label>
+                            <div class="input-with-button">
+                                <input type="text" id="iconPath" readonly>
+                                <button type="button" id="browseIcon" class="btn">Parcourir</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description (optionnelle)</label>
+                            <textarea id="description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="preview-container">
+                        <h3>Aperçu</h3>
+                        <div class="shortcut-preview">
+                            <img id="previewIcon" src="" alt="">
+                            <span id="previewName"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Ajouter</button>
+                    <button type="button" class="btn" id="cancelForm">Annuler</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Navigation des dossiers -->
+        <div id="folderNav" class="folder-navigation">
+            <div class="folder-breadcrumb">
+                <button class="folder-crumb" data-folder="">📁 Tous les raccourcis</button>
+            </div>
+            <button id="addFolderBtn" class="btn btn-small">➕ Nouveau dossier</button>
+        </div>
+
+        <!-- Conteneur unifié (dossiers + raccourcis) -->
+        <div id="itemsContainer" class="grid-view"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

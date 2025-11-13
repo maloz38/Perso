@@ -1,0 +1,968 @@
+console.log('script.js chargé, début exécution');
+// Placeholder (1x1 transparent gif) used when an icon is missing or invalid
+const DEFAULT_ICON_JS = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+// Folder management
+let currentFolder = '';
+let folders = [];
+let currentSort = 'custom'; // az, za, recent, custom
+
+// DOM Elements
+const toggleFormBtn = document.getElementById('toggleFormBtn');
+const gridViewBtn = document.getElementById('gridViewBtn');
+const listViewBtn = document.getElementById('listViewBtn');
+const shortcutForm = document.getElementById('shortcutForm');
+const addShortcutForm = document.getElementById('addShortcutForm');
+const itemsContainer = document.getElementById('itemsContainer');
+const previewIcon = document.getElementById('previewIcon');
+const previewName = document.getElementById('previewName');
+const cancelFormBtn = document.getElementById('cancelForm');
+const descriptionInput = document.getElementById('description');
+const sortBtn = document.getElementById('sortBtn');
+const sortMenu = document.getElementById('sortMenu');
+
+// Auto-capitalize description
+descriptionInput.addEventListener('input', (e) => {
+    const value = e.target.value;
+    if (value.length > 0 && value[0] !== value[0].toUpperCase()) {
+        const cursorPos = e.target.selectionStart;
+        e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+        e.target.setSelectionRange(cursorPos, cursorPos);
+    }
+});
+
+// Toggle form visibility
+toggleFormBtn.addEventListener('click', () => {
+    shortcutForm.classList.toggle('hidden');
+    // Pré-sélectionner le dossier actuel
+    if (!shortcutForm.classList.contains('hidden')) {
+        document.getElementById('folder').value = currentFolder;
+    }
+});
+
+cancelFormBtn.addEventListener('click', () => {
+    shortcutForm.classList.add('hidden');
+    addShortcutForm.reset();
+    previewIcon.src = '';
+    previewName.textContent = '';
+});
+
+// Sort menu toggle
+sortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sortMenu.classList.toggle('hidden');
+});
+
+// Close sort menu when clicking outside
+document.addEventListener('click', () => {
+    sortMenu.classList.add('hidden');
+});
+
+// Sort menu options
+sortMenu.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        currentSort = btn.dataset.sort;
+        sortMenu.classList.add('hidden');
+        await renderItems();
+    });
+});
+
+// View mode toggle
+const toggleViewBtn = document.getElementById('toggleViewBtn');
+let isGridView = true;
+
+toggleViewBtn.addEventListener('click', () => {
+    isGridView = !isGridView;
+    toggleViewBtn.textContent = isGridView ? 'Mode Liste' : 'Mode Grille';
+    itemsContainer.className = isGridView ? 'grid-view' : 'list-view';
+});
+
+// File browsing
+document.getElementById('browseFile').addEventListener('click', async () => {
+    const result = await window.pywebview.api.pickFile();
+    if (result) {
+        document.getElementById('path').value = result.path;
+        document.getElementById('iconPath').value = result.iconPath || result.path;
+        // Request icon extraction for preview
+        const iconData = await window.pywebview.api.getIconForPath(result.iconPath || result.path);
+        previewIcon.src = iconData;
+        updatePreview();
+    }
+});
+
+document.getElementById('browseIcon').addEventListener('click', async () => {
+    try {
+        const result = await window.pywebview.api.pickIcon();
+        if (result && result.iconPath) {
+            document.getElementById('iconPath').value = result.iconPath;
+            previewIcon.src = result.preview;
+            updatePreview();
+        }
+    } catch (error) {
+        console.error('Erreur lors de la sélection de l\'icône:', error);
+    }
+});
+
+// Preview updates
+document.getElementById('name').addEventListener('input', updatePreview);
+
+function updatePreview() {
+    const nameInput = document.getElementById('name');
+    previewName.textContent = nameInput.value || 'Aperçu';
+}
+
+// Form submission
+addShortcutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        name: document.getElementById('name').value,
+        path: document.getElementById('path').value,
+        iconPath: document.getElementById('iconPath').value || document.getElementById('path').value,
+        description: document.getElementById('description').value,
+        folder: document.getElementById('folder').value
+    };
+    
+    const editIndex = addShortcutForm.dataset.editIndex;
+    if (editIndex !== undefined) {
+        // Mode édition
+        await window.pywebview.api.updateShortcut(parseInt(editIndex), data);
+        delete addShortcutForm.dataset.editIndex;
+        const submitBtn = addShortcutForm.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Ajouter';
+    } else {
+        // Mode ajout
+        await window.pywebview.api.addShortcut(data);
+    }
+    
+    await loadFolders();
+    await renderItems();
+    
+    // Reset form and hide
+    addShortcutForm.reset();
+    previewIcon.src = '';
+    previewName.textContent = '';
+    shortcutForm.classList.add('hidden');
+});
+
+// Gestion du menu contextuel
+function showContextMenu(e, shortcutEl, shortcut, index) {
+    e.preventDefault();
+    // Supprimer tout menu contextuel existant
+    const oldMenu = document.querySelector('.context-menu');
+    if (oldMenu) oldMenu.remove();
+
+    // Créer le nouveau menu
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.innerHTML = `
+        <div class="menu-item edit">Modifier</div>
+        <div class="menu-item delete">Supprimer</div>
+    `;
+    
+    // Positionner le menu
+    menu.style.left = `${e.pageX}px`;
+    menu.style.top = `${e.pageY}px`;
+    document.body.appendChild(menu);
+
+    // Gestionnaires d'événements
+    menu.querySelector('.edit').onclick = () => {
+        openEditForm(shortcut, index);
+        menu.remove();
+    };
+
+    menu.querySelector('.delete').onclick = async () => {
+        if (confirm('Voulez-vous vraiment supprimer ce raccourci ?')) {
+            await window.pywebview.api.deleteShortcut(index);
+            await renderShortcuts();
+        }
+        menu.remove();
+    };
+
+    // Fermer le menu au clic ailleurs
+    document.addEventListener('click', function closeMenu(e) {
+        if (!menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeMenu);
+        }
+    });
+}
+
+// Menu contextuel pour les dossiers
+function showFolderContextMenu(e, folderEl, item) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Supprimer tout menu contextuel existant
+    const oldMenu = document.querySelector('.context-menu');
+    if (oldMenu) oldMenu.remove();
+
+    // Créer le nouveau menu
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.innerHTML = `
+        <div class="menu-item delete">Supprimer le dossier</div>
+    `;
+    
+    // Positionner le menu
+    menu.style.left = `${e.pageX}px`;
+    menu.style.top = `${e.pageY}px`;
+    document.body.appendChild(menu);
+
+    // Gestionnaire de suppression
+    menu.querySelector('.delete').onclick = async () => {
+        await deleteFolder(item.fullPath);
+        menu.remove();
+    };
+
+    // Fermer le menu au clic ailleurs
+    document.addEventListener('click', function closeMenu(e) {
+        if (!menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeMenu);
+        }
+    });
+}
+
+// Formulaire d'édition
+async function openEditForm(shortcut, index) {
+    shortcutForm.classList.remove('hidden');
+    document.getElementById('name').value = shortcut.name;
+    document.getElementById('path').value = shortcut.path;
+    document.getElementById('iconPath').value = shortcut.iconPath || shortcut.path;
+    document.getElementById('description').value = shortcut.description || '';
+    document.getElementById('folder').value = shortcut.folder || '';
+    
+    // Load icon for preview
+    const iconPath = shortcut.iconPath || shortcut.path;
+    const iconData = await window.pywebview.api.getIconForPath(iconPath);
+    previewIcon.src = iconData;
+    previewName.textContent = shortcut.name;
+    
+    // Modifier le formulaire pour le mode édition
+    const submitBtn = addShortcutForm.querySelector('button[type="submit"]');
+    submitBtn.textContent = 'Modifier';
+    addShortcutForm.dataset.editIndex = index;
+}
+
+// Shortcuts rendering
+// Unified render function for folders and shortcuts
+async function renderItems() {
+    try {
+        const allShortcuts = await window.pywebview.api.getShortcuts();
+        itemsContainer.innerHTML = '';
+        
+        // Get subfolders at current level
+        const currentPrefix = currentFolder ? currentFolder + '/' : '';
+        const subfolders = new Set();
+        folders.forEach(folder => {
+            if (folder.startsWith(currentPrefix)) {
+                const remainder = folder.substring(currentPrefix.length);
+                if (remainder && !remainder.includes('/')) {
+                    subfolders.add(folder);
+                }
+            } else if (!currentFolder && !folder.includes('/')) {
+                subfolders.add(folder);
+            }
+        });
+        
+        // Filter shortcuts by current folder
+        const shortcuts = allShortcuts.filter(s => (s.folder || '') === currentFolder);
+        
+        // Build items array (folders + shortcuts)
+        let items = [];
+        
+        // Add folders
+        subfolders.forEach(folder => {
+            const displayName = folder.split('/').pop();
+            const count = allShortcuts.filter(s => 
+                s.folder && (s.folder === folder || s.folder.startsWith(folder + '/'))
+            ).length;
+            const storedOrder = localStorage.getItem(`folder_order_${currentFolder}_${folder}`);
+            items.push({
+                type: 'folder',
+                name: displayName,
+                fullPath: folder,
+                count,
+                customOrder: storedOrder !== null ? parseInt(storedOrder) : 999999
+            });
+        });
+        
+        // Add shortcuts
+        shortcuts.forEach((shortcut, idx) => {
+            items.push({
+                type: 'shortcut',
+                data: shortcut,
+                index: allShortcuts.indexOf(shortcut),
+                name: shortcut.name,
+                customOrder: shortcut.customOrder || 999999,
+                lastOpened: shortcut.lastOpened || 0
+            });
+        });
+        
+        // Apply sorting
+        sortItems(items);
+        
+        if (items.length === 0) {
+            itemsContainer.innerHTML = '<div style="opacity:0.5;text-align:center;margin-top:2em">Aucun élément dans ce dossier</div>';
+            return;
+        }
+        
+        // Render items
+        items.forEach((item, position) => {
+            if (item.type === 'folder') {
+                const folderEl = createFolderElement(item, position);
+                itemsContainer.appendChild(folderEl);
+            } else {
+                const shortcutEl = createShortcutElement(item, position);
+                itemsContainer.appendChild(shortcutEl);
+            }
+        });
+    } catch (e) {
+        itemsContainer.innerHTML = '<div style="color:red;text-align:center;margin-top:2em">Erreur lors du chargement</div>';
+        console.error('Erreur lors du chargement:', e);
+    }
+}
+
+function sortItems(items) {
+    switch (currentSort) {
+        case 'az':
+            items.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'za':
+            items.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+        case 'recent':
+            items.sort((a, b) => {
+                const aTime = a.lastOpened || 0;
+                const bTime = b.lastOpened || 0;
+                return bTime - aTime;
+            });
+            break;
+        case 'custom':
+            items.sort((a, b) => (a.customOrder || 999999) - (b.customOrder || 999999));
+            break;
+    }
+}
+
+function createFolderElement(item, position) {
+    const folderEl = document.createElement('div');
+    folderEl.className = 'shortcut folder-item-card';
+    folderEl.dataset.position = position;
+    folderEl.dataset.type = 'folder';
+    folderEl.dataset.fullPath = item.fullPath;
+    folderEl.draggable = currentSort === 'custom';
+    
+    folderEl.innerHTML = `
+        <div class="folder-icon">📁</div>
+        <div class="shortcut-info">
+            <div class="shortcut-name">${item.name}</div>
+            <div class="shortcut-description">${item.count} élément${item.count > 1 ? 's' : ''}</div>
+        </div>
+    `;
+    
+    folderEl.onclick = (e) => {
+        navigateToFolder(item.fullPath);
+    };
+    
+    folderEl.oncontextmenu = (e) => showFolderContextMenu(e, folderEl, item);
+    
+    return folderEl;
+}
+
+function createShortcutElement(item, position) {
+    const shortcut = item.data;
+    const shortcutEl = document.createElement('div');
+    shortcutEl.className = 'shortcut';
+    shortcutEl.dataset.position = position;
+    shortcutEl.dataset.type = 'shortcut';
+    shortcutEl.dataset.index = item.index;
+    shortcutEl.draggable = currentSort === 'custom';
+    
+    shortcutEl.onclick = (e) => {
+        if (e.button === 0) {
+            window.pywebview.api.openShortcut(shortcut.path);
+            // Update lastOpened
+            updateLastOpened(item.index);
+        }
+    };
+    shortcutEl.oncontextmenu = (e) => showContextMenu(e, shortcutEl, shortcut, item.index);
+    
+    const img = document.createElement('img');
+    img.alt = shortcut.name;
+    img.src = `/icon/${item.index}`;
+    img.onerror = () => {
+        img.src = DEFAULT_ICON_JS;
+        img.classList.add('missing');
+    };
+    
+    const info = document.createElement('div');
+    info.className = 'shortcut-info';
+    const name = document.createElement('div');
+    name.className = 'shortcut-name';
+    name.textContent = shortcut.name;
+    
+    if (shortcut.description) {
+        const desc = document.createElement('div');
+        desc.className = 'shortcut-description';
+        desc.textContent = shortcut.description;
+        info.appendChild(name);
+        info.appendChild(desc);
+    } else {
+        info.appendChild(name);
+    }
+    
+    shortcutEl.appendChild(img);
+    shortcutEl.appendChild(info);
+    
+    return shortcutEl;
+}
+
+async function updateLastOpened(index) {
+    try {
+        const shortcuts = await window.pywebview.api.getShortcuts();
+        const shortcut = shortcuts[index];
+        if (shortcut) {
+            shortcut.lastOpened = Date.now();
+            await window.pywebview.api.updateShortcut(index, shortcut);
+        }
+    } catch (e) {
+        console.error('Error updating lastOpened:', e);
+    }
+}
+
+// Keep old function name for compatibility
+async function renderShortcuts() {
+    await renderItems();
+}
+
+// Theme management
+const stylePanel = document.getElementById('stylePanel');
+const toggleStyleBtn = document.getElementById('toggleStyleBtn');
+const presetTheme = document.getElementById('presetTheme');
+const bannerColor = document.getElementById('bannerColor');
+const primaryColor = document.getElementById('primaryColor');
+const backgroundPageColor = document.getElementById('backgroundPageColor');
+const cardsColor = document.getElementById('cardsColor');
+const accentColor = document.getElementById('accentColor');
+const buttonColor = document.getElementById('buttonColor');
+const textColor = document.getElementById('textColor');
+const borderRadius = document.getElementById('borderRadius');
+const shadowSize = document.getElementById('shadowSize');
+const iconSizeInput = document.getElementById('iconSize');
+const saveThemeBtn = document.getElementById('saveTheme');
+const themeNameInput = document.getElementById('themeName');
+const savedThemesContainer = document.getElementById('savedThemes');
+
+// Predefined themes
+const presetThemes = {
+    default: {
+        bannerColor: '#2c3e50',
+        primaryColor: '#f5f6fa',
+        backgroundPageColor: '#e8eaf0',
+        cardsColor: '#ffffff',
+        accentColor: '#3498db',
+        buttonColor: '#3498db',
+        textColor: '#333333',
+        borderRadius: 4,
+        shadowSize: 4,
+        iconSize: 64
+    },
+    modern: {
+        bannerColor: '#1a237e',
+        primaryColor: '#fafafa',
+        backgroundPageColor: '#eeeeee',
+        cardsColor: '#ffffff',
+        accentColor: '#00bcd4',
+        buttonColor: '#00bcd4',
+        textColor: '#212121',
+        borderRadius: 8,
+        shadowSize: 8,
+        iconSize: 80
+    },
+    soft: {
+        bannerColor: '#5d4037',
+        primaryColor: '#efebe9',
+        backgroundPageColor: '#d7ccc8',
+        cardsColor: '#fafafa',
+        accentColor: '#8d6e63',
+        buttonColor: '#a1887f',
+        textColor: '#3e2723',
+        borderRadius: 16,
+        shadowSize: 12,
+        iconSize: 72
+    },
+    sharp: {
+        bannerColor: '#212121',
+        primaryColor: '#ffffff',
+        backgroundPageColor: '#f5f5f5',
+        cardsColor: '#ffffff',
+        accentColor: '#f44336',
+        buttonColor: '#f44336',
+        textColor: '#000000',
+        borderRadius: 0,
+        shadowSize: 2,
+        iconSize: 56
+    },
+    dark: {
+        bannerColor: '#263238',
+        primaryColor: '#37474f',
+        backgroundPageColor: '#263238',
+        cardsColor: '#455a64',
+        accentColor: '#4caf50',
+        buttonColor: '#66bb6a',
+        textColor: '#ffffff',
+        borderRadius: 6,
+        shadowSize: 10,
+        iconSize: 64
+    }
+};
+
+// Load current theme values into inputs
+function loadCurrentTheme() {
+    const root = document.documentElement;
+    const computedStyle = getComputedStyle(root);
+    
+    bannerColor.value = computedStyle.getPropertyValue('--banner-color').trim();
+    primaryColor.value = computedStyle.getPropertyValue('--primary-color').trim();
+    backgroundPageColor.value = computedStyle.getPropertyValue('--background-page-color').trim();
+    cardsColor.value = computedStyle.getPropertyValue('--cards-color').trim();
+    accentColor.value = computedStyle.getPropertyValue('--accent-color').trim();
+    buttonColor.value = computedStyle.getPropertyValue('--button-color').trim();
+    textColor.value = computedStyle.getPropertyValue('--text-color').trim();
+    borderRadius.value = parseInt(computedStyle.getPropertyValue('--border-radius')) || 4;
+    shadowSize.value = parseInt(computedStyle.getPropertyValue('--shadow-size')) || 10;
+    iconSizeInput.value = parseInt(computedStyle.getPropertyValue('--icon-size')) || 64;
+}
+
+// Apply theme in real-time
+function applyThemeRealtime() {
+    const theme = {
+        bannerColor: bannerColor.value,
+        primaryColor: primaryColor.value,
+        backgroundPageColor: backgroundPageColor.value,
+        cardsColor: cardsColor.value,
+        accentColor: accentColor.value,
+        buttonColor: buttonColor.value,
+        textColor: textColor.value,
+        borderRadius: parseInt(borderRadius.value),
+        shadowSize: parseInt(shadowSize.value),
+        iconSize: parseInt(iconSizeInput.value)
+    };
+    applyTheme(theme);
+}
+
+// Add real-time listeners
+bannerColor.addEventListener('input', applyThemeRealtime);
+primaryColor.addEventListener('input', applyThemeRealtime);
+backgroundPageColor.addEventListener('input', applyThemeRealtime);
+cardsColor.addEventListener('input', applyThemeRealtime);
+accentColor.addEventListener('input', applyThemeRealtime);
+buttonColor.addEventListener('input', applyThemeRealtime);
+textColor.addEventListener('input', applyThemeRealtime);
+borderRadius.addEventListener('input', applyThemeRealtime);
+shadowSize.addEventListener('input', applyThemeRealtime);
+iconSizeInput.addEventListener('input', applyThemeRealtime);
+
+// Toggle style panel
+toggleStyleBtn.addEventListener('click', () => {
+    stylePanel.classList.toggle('hidden');
+    settingsPanel.classList.add('hidden'); // Close settings if open
+    if (!stylePanel.classList.contains('hidden')) {
+        loadCurrentTheme(); // Load current values when opening
+    }
+});
+
+document.getElementById('closeStyle').addEventListener('click', () => {
+    stylePanel.classList.add('hidden');
+});
+
+// Toggle settings panel
+const settingsPanel = document.getElementById('settingsPanel');
+document.getElementById('toggleSettingsBtn').addEventListener('click', () => {
+    settingsPanel.classList.toggle('hidden');
+    stylePanel.classList.add('hidden'); // Close style if open
+});
+
+document.getElementById('closeSettings').addEventListener('click', () => {
+    settingsPanel.classList.add('hidden');
+});
+
+// Apply theme from inputs
+document.getElementById('applyStyle').addEventListener('click', async () => {
+    const theme = {
+        bannerColor: bannerColor.value,
+        primaryColor: primaryColor.value,
+        backgroundPageColor: backgroundPageColor.value,
+        cardsColor: cardsColor.value,
+        accentColor: accentColor.value,
+        buttonColor: buttonColor.value,
+        textColor: textColor.value,
+        borderRadius: parseInt(borderRadius.value),
+        shadowSize: parseInt(shadowSize.value),
+        iconSize: parseInt(iconSizeInput.value)
+    };
+    applyTheme(theme);
+    await window.pywebview.api.saveTheme(theme);
+});
+
+// Load preset theme and apply immediately
+presetTheme.addEventListener('change', () => {
+    const theme = presetThemes[presetTheme.value];
+    if (theme) {
+        // Update inputs and apply immediately
+        applyTheme(theme);
+    }
+});
+
+// Save custom theme
+saveThemeBtn.addEventListener('click', async () => {
+    const name = themeNameInput.value.trim();
+    if (!name) return;
+    
+    const theme = {
+        name,
+        bannerColor: bannerColor.value,
+        primaryColor: primaryColor.value,
+        backgroundPageColor: backgroundPageColor.value,
+        cardsColor: cardsColor.value,
+        accentColor: accentColor.value,
+        buttonColor: buttonColor.value,
+        textColor: textColor.value,
+        borderRadius: parseInt(borderRadius.value),
+        shadowSize: parseInt(shadowSize.value),
+        iconSize: parseInt(iconSizeInput.value)
+    };
+    
+    await window.pywebview.api.saveCustomTheme(theme);
+    themeNameInput.value = '';
+    await loadSavedThemes();
+});
+
+// Apply theme function
+function applyTheme(theme) {
+    document.documentElement.style.setProperty('--banner-color', theme.bannerColor);
+    document.documentElement.style.setProperty('--primary-color', theme.primaryColor);
+    document.documentElement.style.setProperty('--background-page-color', theme.backgroundPageColor);
+    document.documentElement.style.setProperty('--cards-color', theme.cardsColor);
+    document.documentElement.style.setProperty('--accent-color', theme.accentColor);
+    document.documentElement.style.setProperty('--button-color', theme.buttonColor);
+    document.documentElement.style.setProperty('--text-color', theme.textColor);
+    document.documentElement.style.setProperty('--border-radius', `${theme.borderRadius}px`);
+    document.documentElement.style.setProperty('--icon-size', `${theme.iconSize}px`);
+    
+    const shadowValue = `0 ${theme.shadowSize/2}px ${theme.shadowSize}px rgba(0,0,0,0.1)`;
+    document.documentElement.style.setProperty('--shadow', shadowValue);
+    document.documentElement.style.setProperty('--shadow-size', theme.shadowSize);
+    
+    // Update inputs to reflect current theme
+    bannerColor.value = theme.bannerColor;
+    primaryColor.value = theme.primaryColor;
+    backgroundPageColor.value = theme.backgroundPageColor;
+    cardsColor.value = theme.cardsColor;
+    accentColor.value = theme.accentColor;
+    buttonColor.value = theme.buttonColor;
+    textColor.value = theme.textColor;
+    borderRadius.value = theme.borderRadius;
+    shadowSize.value = theme.shadowSize;
+    iconSizeInput.value = theme.iconSize || 64;
+}
+
+// Load saved themes
+async function loadSavedThemes() {
+    const themes = await window.pywebview.api.getCustomThemes();
+    savedThemesContainer.innerHTML = '';
+    
+    themes.forEach(theme => {
+        const themeEl = document.createElement('div');
+        themeEl.className = 'theme-item';
+        themeEl.innerHTML = `
+            <span>${theme.name}</span>
+            <button class="btn small" onclick="applyCustomTheme('${theme.name}')">Appliquer</button>
+        `;
+        savedThemesContainer.appendChild(themeEl);
+    });
+}
+
+// Apply a saved custom theme by name
+async function applyCustomTheme(name) {
+    try {
+        const themes = await window.pywebview.api.getCustomThemes();
+        let theme = themes.find(t => t.name === name);
+        if (!theme) return;
+        
+        // Migrate old theme format to new one
+        if (theme.backgroundColor && !theme.bannerColor) {
+            theme.bannerColor = theme.backgroundColor;
+            theme.backgroundPageColor = theme.primaryColor || '#f5f6fa';
+            theme.primaryColor = '#f5f6fa';
+            theme.cardsColor = '#ffffff';
+        }
+        
+        // Apply default values for missing properties
+        theme.bannerColor = theme.bannerColor || '#2c3e50';
+        theme.primaryColor = theme.primaryColor || '#f5f6fa';
+        theme.backgroundPageColor = theme.backgroundPageColor || '#e8eaf0';
+        theme.cardsColor = theme.cardsColor || '#ffffff';
+        theme.accentColor = theme.accentColor || '#3498db';
+        theme.buttonColor = theme.buttonColor || '#3498db';
+        theme.textColor = theme.textColor || '#333333';
+        theme.borderRadius = theme.borderRadius || 4;
+        theme.shadowSize = theme.shadowSize || 10;
+        theme.iconSize = theme.iconSize || 64;
+        
+        applyTheme(theme);
+        // Update the inputs so the user sees current values
+        setThemeInputs(theme);
+        // Persist as current theme
+        await window.pywebview.api.saveTheme(theme);
+    } catch (e) {
+        console.error('Erreur en appliquant le thème personnalisé:', e);
+    }
+}
+
+function setThemeInputs(theme) {
+    try {
+        bannerColor.value = theme.bannerColor || bannerColor.value;
+        primaryColor.value = theme.primaryColor || primaryColor.value;
+        backgroundPageColor.value = theme.backgroundPageColor || backgroundPageColor.value;
+        cardsColor.value = theme.cardsColor || cardsColor.value;
+        accentColor.value = theme.accentColor || accentColor.value;
+        buttonColor.value = theme.buttonColor || buttonColor.value;
+        textColor.value = theme.textColor || textColor.value;
+        borderRadius.value = (typeof theme.borderRadius !== 'undefined') ? theme.borderRadius : borderRadius.value;
+        shadowSize.value = (typeof theme.shadowSize !== 'undefined') ? theme.shadowSize : shadowSize.value;
+        iconSizeInput.value = (typeof theme.iconSize !== 'undefined') ? theme.iconSize : iconSizeInput.value;
+    } catch (e) {
+        console.error('Erreur en mettant à jour les contrôles de thème:', e);
+    }
+}
+
+// Initial load
+async function initializeApp() {
+    try {
+        console.log('Initialisation...');
+        await loadFolders();
+        await renderItems();
+        const savedTheme = await window.pywebview.api.getTheme();
+        if (savedTheme) {
+            // Migrate old theme format to new one
+            if (savedTheme.backgroundColor && !savedTheme.bannerColor) {
+                // Old format: backgroundColor was banner, primaryColor was content
+                savedTheme.bannerColor = savedTheme.backgroundColor;
+                savedTheme.backgroundPageColor = savedTheme.primaryColor || '#f5f6fa';
+                savedTheme.primaryColor = '#f5f6fa';
+                savedTheme.cardsColor = '#ffffff';
+                // Save migrated theme
+                await window.pywebview.api.saveTheme(savedTheme);
+            }
+            // Apply default values for missing properties
+            savedTheme.bannerColor = savedTheme.bannerColor || '#2c3e50';
+            savedTheme.primaryColor = savedTheme.primaryColor || '#f5f6fa';
+            savedTheme.backgroundPageColor = savedTheme.backgroundPageColor || '#e8eaf0';
+            savedTheme.cardsColor = savedTheme.cardsColor || '#ffffff';
+            savedTheme.accentColor = savedTheme.accentColor || '#3498db';
+            savedTheme.buttonColor = savedTheme.buttonColor || '#3498db';
+            savedTheme.textColor = savedTheme.textColor || '#333333';
+            savedTheme.borderRadius = savedTheme.borderRadius || 4;
+            savedTheme.shadowSize = savedTheme.shadowSize || 10;
+            savedTheme.iconSize = savedTheme.iconSize || 64;
+            applyTheme(savedTheme);
+        } else {
+            // Load default theme if no saved theme
+            loadCurrentTheme();
+        }
+        await loadSavedThemes();
+        setupDragAndDrop();
+        console.log('Initialisation terminée');
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation:', error);
+    }
+}
+
+// Folder Management
+async function loadFolders() {
+    try {
+        const shortcuts = await window.pywebview.api.getShortcuts();
+        const folderSet = new Set();
+        shortcuts.forEach(s => {
+            if (s.folder) {
+                folderSet.add(s.folder);
+                // Add all parent paths too
+                const parts = s.folder.split('/');
+                for (let i = 1; i < parts.length; i++) {
+                    folderSet.add(parts.slice(0, i).join('/'));
+                }
+            }
+        });
+        folders = Array.from(folderSet).sort();
+        updateFolderSelect();
+    } catch (error) {
+        console.error('Error loading folders:', error);
+    }
+}
+
+function updateFolderSelect() {
+    const folderSelect = document.getElementById('folder');
+    folderSelect.innerHTML = '<option value="">Racine</option>';
+    folders.forEach(folder => {
+        const option = document.createElement('option');
+        option.value = folder;
+        option.textContent = folder;
+        folderSelect.appendChild(option);
+    });
+}
+
+// Keep compatibility
+async function renderFolders() {
+    await renderItems();
+}
+
+function navigateToFolder(folder) {
+    currentFolder = folder;
+    updateBreadcrumb();
+    renderItems();
+}
+
+function updateBreadcrumb() {
+    const breadcrumb = document.querySelector('.folder-breadcrumb');
+    breadcrumb.innerHTML = '';
+    
+    const rootBtn = document.createElement('button');
+    rootBtn.className = 'folder-crumb' + (currentFolder === '' ? ' active' : '');
+    rootBtn.textContent = '📁 Tous les raccourcis';
+    rootBtn.onclick = () => navigateToFolder('');
+    breadcrumb.appendChild(rootBtn);
+    
+    if (currentFolder) {
+        const parts = currentFolder.split('/');
+        let path = '';
+        parts.forEach((part, index) => {
+            path += (path ? '/' : '') + part;
+            const isLast = index === parts.length - 1;
+            const folderBtn = document.createElement('button');
+            folderBtn.className = 'folder-crumb' + (isLast ? ' active' : '');
+            folderBtn.textContent = part;
+            const btnPath = path;
+            folderBtn.onclick = () => navigateToFolder(btnPath);
+            breadcrumb.appendChild(folderBtn);
+        });
+    }
+}
+
+document.getElementById('addFolderBtn').addEventListener('click', () => {
+    const folderName = prompt('Nom du nouveau dossier:');
+    if (folderName && folderName.trim()) {
+        let fullPath = folderName.trim();
+        // If we're in a folder, prefix with current path
+        if (currentFolder) {
+            fullPath = currentFolder + '/' + fullPath;
+        }
+        if (!folders.includes(fullPath)) {
+            folders.push(fullPath);
+            folders.sort();
+            updateFolderSelect();
+            renderFolders();
+        }
+    }
+});
+
+async function deleteFolder(folder) {
+    if (confirm(`Supprimer le dossier "${folder}"?\nLes raccourcis seront déplacés à la racine.`)) {
+        const shortcuts = await window.pywebview.api.getShortcuts();
+        for (let i = 0; i < shortcuts.length; i++) {
+            if (shortcuts[i].folder === folder) {
+                shortcuts[i].folder = '';
+                await window.pywebview.api.updateShortcut(i, shortcuts[i]);
+            }
+        }
+        folders = folders.filter(f => f !== folder);
+        updateFolderSelect();
+        await renderItems();
+    }
+}
+
+// Drag and Drop System
+let draggedElement = null;
+
+function setupDragAndDrop() {
+    itemsContainer.addEventListener('dragstart', handleDragStart);
+    itemsContainer.addEventListener('dragend', handleDragEnd);
+    itemsContainer.addEventListener('dragover', handleDragOver);
+    itemsContainer.addEventListener('drop', handleDrop);
+}
+
+function handleDragStart(e) {
+    if (e.target.classList.contains('shortcut') && currentSort === 'custom') {
+        draggedElement = e.target;
+        e.target.style.opacity = '0.4';
+    }
+}
+
+function handleDragEnd(e) {
+    e.target.style.opacity = '1';
+    draggedElement = null;
+}
+
+function handleDragOver(e) {
+    if (!draggedElement || currentSort !== 'custom') return;
+    e.preventDefault();
+    const target = e.target.closest('.shortcut');
+    if (target && target !== draggedElement) {
+        const rect = target.getBoundingClientRect();
+        const midpoint = rect.left + rect.width / 2;
+        if (e.clientX < midpoint) {
+            target.parentNode.insertBefore(draggedElement, target);
+        } else {
+            target.parentNode.insertBefore(draggedElement, target.nextSibling);
+        }
+    }
+}
+
+async function handleDrop(e) {
+    e.preventDefault();
+    if (!draggedElement || currentSort !== 'custom') return;
+    
+    // Save new order
+    const items = Array.from(itemsContainer.children);
+    const shortcuts = await window.pywebview.api.getShortcuts();
+    
+    items.forEach((el, newPosition) => {
+        if (el.dataset.type === 'shortcut') {
+            const index = parseInt(el.dataset.index);
+            if (shortcuts[index]) {
+                shortcuts[index].customOrder = newPosition;
+            }
+        } else if (el.dataset.type === 'folder') {
+            // Store folder order in localStorage for now
+            const folderPath = el.dataset.fullPath;
+            localStorage.setItem(`folder_order_${currentFolder}_${folderPath}`, newPosition);
+        }
+    });
+    
+    // Save all shortcuts
+    for (let i = 0; i < shortcuts.length; i++) {
+        if (shortcuts[i].customOrder !== undefined) {
+            await window.pywebview.api.updateShortcut(i, shortcuts[i]);
+        }
+    }
+    
+    await renderItems();
+}
+
+// Attendre que pywebview soit prêt
+window.addEventListener('pywebviewready', async () => {
+    console.log('pywebview est prêt');
+    await initializeApp();
+});
+
+// Fallback pour le cas où l'événement ne se déclenche pas
+window.addEventListener('load', async () => {
+    console.log('Page chargée');
+    if (window.pywebview && window.pywebview.api) {
+        console.log('pywebview déjà disponible');
+        await initializeApp();
+    } else {
+        console.log('En attente de pywebview...');
+    }
+});

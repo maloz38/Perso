@@ -1,0 +1,71 @@
+[
+  {
+    "name": "KSP",
+    "path": "d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "description": "Kerbal Space Programe",
+    "folder": ""
+  },
+  {
+    "name": "Minecraft",
+    "path": "d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe",
+    "description": "Tlauncher",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe"
+  },
+  {
+    "name": "Steam",
+    "path": "d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "description": "",
+    "folder": ""
+  },
+  {
+    "name": "Poly Bridge 2",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe",
+    "description": "des ponts",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe"
+  },
+  {
+    "name": "Hero Hour",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe",
+    "description": "Des Heros qui se déplacent sur des case en tour par tour",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe"
+  },
+  {
+    "name": "Those Games",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe",
+    "description": "plein de jeux de pubs",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe"
+  },
+  {
+    "name": "Raft",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe",
+    "description": "Un bateau a agrandir et un requin qui mange ce bateau",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe"
+  },
+  {
+    "name": "Portal 2",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.ico",
+    "description": "Des portails partout"
+  },
+  {
+    "name": "Little Nightmares",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe",
+    "description": "Des petit (ou pas) cauchemars",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe"
+  },
+  {
+    "name": "Captain of Industry",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "description": "polluer tout"
+  },
+  {
+    "name": "VS Code",
+    "path": "d:\\malo\\truc_technique\\.taf\\code\\Microsoft VS Code\\Code.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.taf\\code\\Microsoft VS Code\\Code.exe",
+    "description": "pour tout coder",
+    "folder": "Taf/Code"
+  }
+]

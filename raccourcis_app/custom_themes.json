@@ -1,0 +1,33 @@
+[
+  {
+    "name": "test",
+    "primaryColor": "#ff0000",
+    "accentColor": "#00ff00",
+    "backgroundColor": "#1eff00",
+    "borderRadius": 6,
+    "shadowSize": 16
+  },
+  {
+    "name": "bas",
+    "primaryColor": "#0080ff",
+    "accentColor": "#00ff00",
+    "buttonColor": "#ff0000",
+    "textColor": "#00ffe1",
+    "backgroundColor": "#800064",
+    "borderRadius": 10,
+    "shadowSize": 20
+  },
+  {
+    "name": "base",
+    "bannerColor": "#780000",
+    "primaryColor": "#5200a3",
+    "backgroundPageColor": "#00ff80",
+    "cardsColor": "#960096",
+    "accentColor": "#00ff00",
+    "buttonColor": "#0080ff",
+    "textColor": "#00ff00",
+    "borderRadius": 10,
+    "shadowSize": 10,
+    "iconSize": 100
+  }
+]

@@ -1,0 +1,783 @@
+:root {
+    --banner-color: #2c3e50;
+    --primary-color: #f5f6fa;
+    --secondary-color: #ecf0f1;
+    --accent-color: #3498db;
+    --button-color: #3498db;
+    --text-color: #333;
+    --cards-color: #ffffff;
+    --background-page-color: #e8eaf0;
+    --border-radius: 4px;
+    --icon-size: 64px;
+    --shadow-size: 10;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    background-color: var(--background-page-color);
+}
+
+* {
+    color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: var(--banner-color);
+    color: var(--text-color) !important;
+    padding: 15px 20px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header * {
+    color: var(--text-color) !important;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.left-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.right-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Sort Dropdown */
+.sort-dropdown {
+    position: relative;
+}
+
+.sort-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--primary-color);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 180px;
+    z-index: 1000;
+    margin-top: 5px;
+}
+
+.sort-menu button {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: background 0.2s;
+}
+
+.sort-menu button:hover {
+    background: #f5f5f5;
+}
+
+.sort-menu button:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
+
+.btn-icon {
+    font-size: 20px;
+    padding: 8px 12px;
+    min-width: auto;
+}
+
+/* Style Panel */
+.style-panel {
+    background: var(--primary-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.style-section {
+    margin-bottom: 20px;
+}
+
+.style-section > label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.color-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-picker label {
+    width: 80px;
+    color: var(--text-color);
+}
+
+.color-picker input[type="color"] {
+    width: 50px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+}
+
+.range-slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.range-slider label {
+    width: 80px;
+    color: var(--text-color);
+}
+
+.range-slider input[type="range"] {
+    flex: 1;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+}
+
+.themes-section {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.themes-section h4 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.save-theme {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.save-theme input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+}
+
+.saved-themes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.theme-item {
+    padding: 10px;
+    background: var(--secondary-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.style-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    background: var(--button-color);
+    color: var(--text-color);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background: var(--accent-color);
+    color: var(--text-color);
+    transform: translateY(-1px);
+}
+
+.btn.active {
+    background: var(--accent-color);
+    color: var(--text-color);
+}
+
+.btn.primary {
+    background: var(--accent-color);
+    color: white;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-container {
+    background: var(--primary-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.input-with-button {
+    display: flex;
+    gap: 10px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.preview-container {
+    background: var(--secondary-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    text-align: center;
+}
+
+.shortcut-preview {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.shortcut-preview img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#shortcutsContainer {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    background: var(--cards-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#itemsContainer {
+    padding: 16px;
+    gap: 16px;
+    display: grid;
+    background: var(--primary-color);
+}
+
+#itemsContainer.grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-size) + 30px), 1fr));
+}
+
+#itemsContainer.list-view {
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+/* Legacy compatibility */
+#shortcutsContainer {
+    padding: 16px;
+    gap: 16px;
+}
+
+#shortcutsContainer.grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+#shortcutsContainer.list-view {
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+/* Style de base pour tous les raccourcis */
+.shortcut {
+    cursor: pointer;
+    background: var(--cards-color);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.shortcut[draggable="true"] {
+    cursor: move;
+}
+
+.shortcut:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent-color);
+}
+
+.shortcut.dragging {
+    opacity: 0.4;
+}
+
+.folder-item-card {
+    position: relative;
+}
+
+/* Mode grille */
+.grid-view .shortcut {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    height: calc(var(--icon-size) + 60px);
+    width: calc(var(--icon-size) + 30px);
+}
+
+.grid-view .shortcut img {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    margin-bottom: 8px;
+    object-fit: contain;
+}
+
+.grid-view .shortcut-info {
+    width: 100%;
+    text-align: center;
+}
+
+.grid-view .shortcut-description {
+    display: none;
+}
+
+/* Mode liste */
+.list-view .shortcut {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 12px;
+}
+
+.list-view .shortcut img {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.list-view .shortcut-info {
+    flex: 1;
+}
+
+/* Missing / broken image placeholder styling */
+.shortcut img.missing {
+    background: #f0f2f3;
+    width: 64px;
+    height: 64px;
+    display: block;
+    border-radius: 8px;
+}
+
+/* Slightly reduce card inner margins to give more room to the icon */
+.grid-view .shortcut {
+    padding: 6px;
+}
+
+.shortcut img {
+    object-fit: contain;
+    display: block;
+    background: transparent;
+    border-radius: 8px;
+    margin: 0 auto;
+    object-position: center;
+    box-sizing: border-box;
+    /* Force smooth high-quality downscaling for high-res images */
+    image-rendering: smooth;
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: bicubic;
+}
+
+.shortcut-name {
+    font-weight: 500;
+    font-size: 0.9em;
+    line-height: 1.2;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.shortcut-description {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    background: var(--cards-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    min-width: 180px;
+    z-index: 10000;
+    animation: contextMenuFadeIn 0.15s ease-out;
+}
+
+@keyframes contextMenuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.menu-item:hover {
+    background: #f0f0f0;
+}
+
+.menu-item.edit::before {
+    content: "✏️";
+    font-size: 16px;
+}
+
+.menu-item.delete::before {
+    content: "🗑️";
+    font-size: 16px;
+}
+
+.menu-item.delete:hover {
+    background: #fee;
+    color: #c00;
+}
+
+/* Settings Panel */
+.settings-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.settings-section:last-of-type {
+    border-bottom: none;
+}
+
+.settings-section h4 {
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.settings-section label {
+    display: block;
+    margin: 8px 0;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.settings-section input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.settings-section select {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: var(--primary-color);
+}
+
+/* Folder Navigation */
+.folder-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--primary-color);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.folder-breadcrumb {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.folder-crumb {
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.folder-crumb:hover {
+    background: #f0f0f0;
+}
+
+.folder-crumb.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+.folder-crumb:not(:last-child)::after {
+    content: "›";
+    margin-left: 8px;
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+/* Folders Container */
+.folders-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.folder-item {
+    background: var(--cards-color);
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.folder-item:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.folder-item .folder-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.folder-item .folder-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.folder-item .folder-count {
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin-top: 5px;
+}
+
+.folder-item .folder-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.folder-item:hover .folder-actions {
+    opacity: 1;
+}
+
+.folder-delete {
+    background: #fee;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.folder-delete:hover {
+    background: #fcc;
+}
+
+.list-view .shortcut-info {
+    flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px;
+    }
+
+    .header-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .left-controls, .right-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+    }
+
+    .shortcut {
+        padding: 12px;
+    }
+
+    .shortcut-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .style-panel {
+        padding: 15px;
+    }
+
+    .folder-item {
+        padding: 12px;
+    }
+
+    .color-picker {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .color-picker label {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .shortcut {
+        padding: 8px;
+    }
+
+    .shortcut-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .shortcut-name {
+        font-size: 12px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .folder-breadcrumb {
+        flex-wrap: wrap;
+    }
+}
