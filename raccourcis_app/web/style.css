@@ -10,14 +10,35 @@
     --border-radius: 4px;
     --icon-size: 64px;
     --shadow-size: 10;
+    --cards-opacity: 1;
+    --wallpaper-blur: 0px;
+    --font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--font-family);
     margin: 0;
     padding: 0;
     color: var(--text-color);
     background-color: var(--background-page-color);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease;
+}
+
+/* Glassmorphism background for body content if wallpaper is set */
+body.has-wallpaper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(var(--wallpaper-blur));
+    z-index: -1;
+    pointer-events: none;
 }
 
 * {
@@ -370,6 +391,7 @@ select {
 .shortcut {
     cursor: pointer;
     background: var(--cards-color);
+    opacity: var(--cards-opacity);
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
@@ -637,6 +659,7 @@ select {
 
 .folder-item {
     background: var(--cards-color);
+    opacity: var(--cards-opacity);
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
