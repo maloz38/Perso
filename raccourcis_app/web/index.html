@@ -79,6 +79,25 @@
                     </div>
 
                     <div class="style-section">
+                        <label>Fond d'écran</label>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <div class="input-with-button">
+                                <input type="text" id="wallpaperPath" placeholder="Chemin de l'image" readonly>
+                                <button type="button" id="browseWallpaper" class="btn">Parcourir</button>
+                            </div>
+                            <button type="button" id="clearWallpaper" class="btn small" style="margin-top:5px">Supprimer le fond d'écran</button>
+                        </div>
+                        <div class="range-slider">
+                            <label>Flou:</label>
+                            <input type="range" id="wallpaperBlur" min="0" max="20" value="0">
+                        </div>
+                        <div class="range-slider">
+                            <label>Opacité cartes:</label>
+                            <input type="range" id="cardsOpacity" min="0" max="100" value="100">
+                        </div>
+                    </div>
+
+                    <div class="style-section">
                         <label>Style des cartes</label>
                         <div class="range-slider">
                             <label>Arrondi:</label>
@@ -91,6 +110,18 @@
                         <div class="range-slider">
                             <label>Taille icônes:</label>
                             <input type="number" id="iconSize" min="32" max="256" value="64">
+                        </div>
+                        <div class="form-group">
+                            <label>Police:</label>
+                            <select id="fontFamily">
+                                <option value="'Segoe UI', Arial, sans-serif">Segoe UI (Défaut)</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Courier New', monospace">Monospace</option>
+                                <option value="'Georgia', serif">Serif</option>
+                            </select>
                         </div>
                     </div>
 

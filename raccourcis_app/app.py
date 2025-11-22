@@ -9,16 +9,25 @@ import subprocess
 from PIL import Image
 import base64
 from io import BytesIO
-import win32gui
-import win32ui
-import win32con
 import mimetypes
-import ctypes
-from ctypes import wintypes
+
+try:
+    import win32gui
+    import win32ui
+    import win32con
+    import ctypes
+    from ctypes import wintypes
+except ImportError:
+    win32gui = None
+    win32ui = None
+    win32con = None
+    ctypes = None
+    wintypes = None
 
 SHORTCUTS_FILE = "shortcuts.json"
 THEME_FILE = "theme.json"
 CUSTOM_THEMES_FILE = "custom_themes.json"
+FOLDERS_FILE = "folders.json"
 
 # Small transparent placeholder (1x1 GIF) used when no valid icon is available
 DEFAULT_ICON = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
@@ -35,6 +44,19 @@ def load_shortcuts():
 def save_shortcuts(shortcuts):
     with open(SHORTCUTS_FILE, "w", encoding="utf-8") as f:
         json.dump(shortcuts, f, indent=2, ensure_ascii=False)
+
+def load_folders_config():
+    if os.path.exists(FOLDERS_FILE):
+        try:
+            with open(FOLDERS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+def save_folders_config(config):
+    with open(FOLDERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2, ensure_ascii=False)
 
 def load_theme():
     if os.path.exists(THEME_FILE):
@@ -66,6 +88,7 @@ class Api:
     def __init__(self):
         self.shortcuts = load_shortcuts()
         self.custom_themes = load_custom_themes()
+        self.folders_config = load_folders_config()
         # Migrate old shortcuts from base64 to path-based if needed
         try:
             changed = False
@@ -78,7 +101,7 @@ class Api:
                         sc['iconPath'] = path
                         del sc['icon']
                         changed = True
-            
+
             if changed:
                 save_shortcuts(self.shortcuts)
         except Exception as e:
@@ -99,6 +122,8 @@ class Api:
             return None
 
     def get_file_icon(self, file_path):
+        if win32gui is None:
+            return ""
         """Extract icon from file and convert to base64.
         We extract at a large size then downscale with a high-quality filter to reduce pixelation.
         """
@@ -113,12 +138,12 @@ class Api:
         memdc = None
         bmp = None
         oldbmp = None
-        
+
         try:
             # Extract the LARGEST icon available (up to 256x256)
             # Then upscale smoothly to 512x512 if needed
             final_size = 256  # Most Windows icons max out at 256x256
-            
+
             hicon = None
             icon_size = 256  # Try to get the largest size
 
@@ -127,7 +152,7 @@ class Api:
                 # PrivateExtractIconsW can extract icons at any size
                 large_icons = (wintypes.HICON * 1)()
                 small_icons = (wintypes.HICON * 1)()
-                
+
                 # Try to extract at 256x256 (largest common size in modern executables)
                 result = ctypes.windll.user32.PrivateExtractIconsW(
                     str(file_path),  # filename
@@ -139,7 +164,7 @@ class Api:
                     1,               # number of icons
                     0                # flags
                 )
-                
+
                 if result > 0 and large_icons[0]:
                     hicon = large_icons[0]
                     print(f"Extracted {icon_size}x{icon_size} icon using PrivateExtractIcons")
@@ -272,7 +297,7 @@ class Api:
         except Exception as e:
             print(f"Erreur dans getShortcuts: {e}")
             return []
-    
+
     def getIconForPath(self, file_path):
         """Extract and return icon as data URI for a given executable path"""
         try:
@@ -297,6 +322,23 @@ class Api:
     def saveCustomTheme(self, theme):
         self.custom_themes.append(theme)
         save_custom_themes(self.custom_themes)
+        return True
+
+    def getFolderOrders(self):
+        return self.folders_config.get('orders', {})
+
+    def saveFolderOrder(self, folder_path, order):
+        if 'orders' not in self.folders_config:
+            self.folders_config['orders'] = {}
+        self.folders_config['orders'][folder_path] = order
+        save_folders_config(self.folders_config)
+        return True
+
+    def saveFolderOrders(self, orders_dict):
+        if 'orders' not in self.folders_config:
+            self.folders_config['orders'] = {}
+        self.folders_config['orders'].update(orders_dict)
+        save_folders_config(self.folders_config)
         return True
 
     def pickFile(self):
@@ -338,6 +380,20 @@ class Api:
             print(f"Error in pickIcon: {e}")
             return None
 
+    def pickWallpaper(self):
+        try:
+            result = webview.windows[0].create_file_dialog(
+                webview.OPEN_DIALOG,
+                allow_multiple=False,
+                file_types=('Image Files (*.png;*.jpg;*.jpeg;*.webp;*.gif)', 'All files (*.*)')
+            )
+            if result:
+                return result[0]
+            return None
+        except Exception as e:
+            print(f"Error in pickWallpaper: {e}")
+            return None
+
     def addShortcut(self, data):
         # Store the executable path for icon extraction, not the base64
         shortcut = {
@@ -350,6 +406,15 @@ class Api:
         self.shortcuts.append(shortcut)
         save_shortcuts(self.shortcuts)
         return self.shortcuts
+
+    def saveAllShortcuts(self, shortcuts):
+        try:
+            self.shortcuts = shortcuts
+            save_shortcuts(self.shortcuts)
+            return True
+        except Exception as e:
+            print(f"Error saving all shortcuts: {e}")
+            return False
 
     def openShortcut(self, path):
         try:
@@ -394,11 +459,29 @@ if __name__ == '__main__':
 
     # Configuration de Bottle pour servir les fichiers statiques
     app = bottle.Bottle()
-    
+
     @app.route('/')
     def home():
         return bottle.static_file('index.html', root='web')
-    
+
+    @app.route('/wallpaper')
+    def serve_wallpaper():
+        try:
+            theme = load_theme()
+            if theme and 'wallpaperPath' in theme and theme['wallpaperPath']:
+                path = theme['wallpaperPath']
+                if os.path.exists(path):
+                    mime, _ = mimetypes.guess_type(path)
+                    if not mime:
+                        mime = 'application/octet-stream'
+                    with open(path, 'rb') as f:
+                        bottle.response.content_type = mime
+                        return f.read()
+            return bottle.HTTPResponse(status=404)
+        except Exception as e:
+            print(f"Error serving wallpaper: {e}")
+            return bottle.HTTPResponse(status=500)
+
     @app.route('/icon/<index:int>')
     def serve_icon(index):
         """Serve icon as PNG image for a shortcut by index"""
@@ -408,7 +491,7 @@ if __name__ == '__main__':
                 shortcut = api.shortcuts[index]
                 icon_path = shortcut.get('iconPath') or shortcut.get('path')
                 print(f"Icon path: {icon_path}")
-                
+
                 if icon_path and os.path.exists(icon_path):
                     # Extract icon and convert to PNG bytes
                     try:
@@ -417,7 +500,7 @@ if __name__ == '__main__':
                             # Extract base64 data and decode
                             base64_data = icon_data_uri.split(',', 1)[1]
                             png_bytes = base64.b64decode(base64_data)
-                            
+
                             # Serve as PNG image
                             bottle.response.content_type = 'image/png'
                             bottle.response.set_header('Cache-Control', 'public, max-age=3600')
@@ -427,7 +510,7 @@ if __name__ == '__main__':
                         print(f"Error extracting icon from {icon_path}: {e}")
                         import traceback
                         traceback.print_exc()
-            
+
             # Return default icon if not found
             print(f"Returning default icon for index {index}")
             bottle.response.content_type = 'image/gif'
@@ -442,7 +525,7 @@ if __name__ == '__main__':
     @app.route('/<filepath:path>')
     def serve_static(filepath):
         return bottle.static_file(filepath, root='web')
-    
+
     # Démarrer le serveur Bottle dans un thread
     server = threading.Thread(target=lambda: app.run(host='127.0.0.1', port=8080, quiet=True))
     server.daemon = True

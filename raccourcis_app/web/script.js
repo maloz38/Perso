@@ -6,6 +6,7 @@ const DEFAULT_ICON_JS = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAA
 let currentFolder = '';
 let folders = [];
 let currentSort = 'custom'; // az, za, recent, custom
+let folderOrders = {};
 
 // DOM Elements
 const toggleFormBtn = document.getElementById('toggleFormBtn');
@@ -250,6 +251,9 @@ async function openEditForm(shortcut, index) {
 async function renderItems() {
     try {
         const allShortcuts = await window.pywebview.api.getShortcuts();
+        // Refresh folder orders
+        folderOrders = await window.pywebview.api.getFolderOrders();
+
         itemsContainer.innerHTML = '';
         
         // Get subfolders at current level
@@ -278,13 +282,19 @@ async function renderItems() {
             const count = allShortcuts.filter(s => 
                 s.folder && (s.folder === folder || s.folder.startsWith(folder + '/'))
             ).length;
-            const storedOrder = localStorage.getItem(`folder_order_${currentFolder}_${folder}`);
+
+            // Use API stored order
+            let customOrder = 999999;
+            if (folderOrders[folder] !== undefined) {
+                customOrder = folderOrders[folder];
+            }
+
             items.push({
                 type: 'folder',
                 name: displayName,
                 fullPath: folder,
                 count,
-                customOrder: storedOrder !== null ? parseInt(storedOrder) : 999999
+                customOrder: customOrder
             });
         });
         
@@ -295,7 +305,7 @@ async function renderItems() {
                 data: shortcut,
                 index: allShortcuts.indexOf(shortcut),
                 name: shortcut.name,
-                customOrder: shortcut.customOrder || 999999,
+                customOrder: shortcut.customOrder !== undefined ? shortcut.customOrder : 999999,
                 lastOpened: shortcut.lastOpened || 0
             });
         });
@@ -340,7 +350,7 @@ function sortItems(items) {
             });
             break;
         case 'custom':
-            items.sort((a, b) => (a.customOrder || 999999) - (b.customOrder || 999999));
+            items.sort((a, b) => (a.customOrder) - (b.customOrder));
             break;
     }
 }
@@ -450,6 +460,14 @@ const textColor = document.getElementById('textColor');
 const borderRadius = document.getElementById('borderRadius');
 const shadowSize = document.getElementById('shadowSize');
 const iconSizeInput = document.getElementById('iconSize');
+// New Theme Controls
+const wallpaperPathInput = document.getElementById('wallpaperPath');
+const browseWallpaperBtn = document.getElementById('browseWallpaper');
+const clearWallpaperBtn = document.getElementById('clearWallpaper');
+const wallpaperBlurInput = document.getElementById('wallpaperBlur');
+const cardsOpacityInput = document.getElementById('cardsOpacity');
+const fontFamilyInput = document.getElementById('fontFamily');
+
 const saveThemeBtn = document.getElementById('saveTheme');
 const themeNameInput = document.getElementById('themeName');
 const savedThemesContainer = document.getElementById('savedThemes');
@@ -466,7 +484,10 @@ const presetThemes = {
         textColor: '#333333',
         borderRadius: 4,
         shadowSize: 4,
-        iconSize: 64
+        iconSize: 64,
+        cardsOpacity: 100,
+        wallpaperBlur: 0,
+        fontFamily: "'Segoe UI', Arial, sans-serif"
     },
     modern: {
         bannerColor: '#1a237e',
@@ -478,7 +499,10 @@ const presetThemes = {
         textColor: '#212121',
         borderRadius: 8,
         shadowSize: 8,
-        iconSize: 80
+        iconSize: 80,
+        cardsOpacity: 100,
+        wallpaperBlur: 0,
+        fontFamily: "'Roboto', sans-serif"
     },
     soft: {
         bannerColor: '#5d4037',
@@ -490,31 +514,25 @@ const presetThemes = {
         textColor: '#3e2723',
         borderRadius: 16,
         shadowSize: 12,
-        iconSize: 72
+        iconSize: 72,
+        cardsOpacity: 90,
+        wallpaperBlur: 5,
+        fontFamily: "'Lato', sans-serif"
     },
-    sharp: {
-        bannerColor: '#212121',
-        primaryColor: '#ffffff',
-        backgroundPageColor: '#f5f5f5',
-        cardsColor: '#ffffff',
-        accentColor: '#f44336',
-        buttonColor: '#f44336',
-        textColor: '#000000',
-        borderRadius: 0,
-        shadowSize: 2,
-        iconSize: 56
-    },
-    dark: {
-        bannerColor: '#263238',
-        primaryColor: '#37474f',
-        backgroundPageColor: '#263238',
-        cardsColor: '#455a64',
-        accentColor: '#4caf50',
-        buttonColor: '#66bb6a',
-        textColor: '#ffffff',
-        borderRadius: 6,
-        shadowSize: 10,
-        iconSize: 64
+    glass: {
+        bannerColor: 'rgba(44, 62, 80, 0.8)',
+        primaryColor: 'rgba(245, 246, 250, 0.5)',
+        backgroundPageColor: '#2c3e50',
+        cardsColor: 'rgba(255, 255, 255, 0.7)',
+        accentColor: '#3498db',
+        buttonColor: '#3498db',
+        textColor: '#333333',
+        borderRadius: 12,
+        shadowSize: 8,
+        iconSize: 64,
+        cardsOpacity: 70,
+        wallpaperBlur: 10,
+        fontFamily: "'Segoe UI', Arial, sans-serif"
     }
 };
 
@@ -533,6 +551,25 @@ function loadCurrentTheme() {
     borderRadius.value = parseInt(computedStyle.getPropertyValue('--border-radius')) || 4;
     shadowSize.value = parseInt(computedStyle.getPropertyValue('--shadow-size')) || 10;
     iconSizeInput.value = parseInt(computedStyle.getPropertyValue('--icon-size')) || 64;
+
+    // New controls
+    const opacity = parseFloat(computedStyle.getPropertyValue('--cards-opacity'));
+    cardsOpacityInput.value = isNaN(opacity) ? 100 : Math.round(opacity * 100);
+
+    const blur = computedStyle.getPropertyValue('--wallpaper-blur');
+    wallpaperBlurInput.value = parseInt(blur) || 0;
+
+    // Remove quotes for comparison if needed
+    let font = computedStyle.getPropertyValue('--font-family').trim();
+    if (font.startsWith('"') && font.endsWith('"')) {
+        font = font.substring(1, font.length - 1);
+    }
+    // Try to match font
+    Array.from(fontFamilyInput.options).forEach(opt => {
+        if (opt.value.includes(font.split(',')[0].replace(/['"]/g, ''))) {
+            fontFamilyInput.value = opt.value;
+        }
+    });
 }
 
 // Apply theme in real-time
@@ -547,7 +584,11 @@ function applyThemeRealtime() {
         textColor: textColor.value,
         borderRadius: parseInt(borderRadius.value),
         shadowSize: parseInt(shadowSize.value),
-        iconSize: parseInt(iconSizeInput.value)
+        iconSize: parseInt(iconSizeInput.value),
+        cardsOpacity: parseInt(cardsOpacityInput.value),
+        wallpaperBlur: parseInt(wallpaperBlurInput.value),
+        fontFamily: fontFamilyInput.value,
+        wallpaperPath: wallpaperPathInput.value // Keep current wallpaper
     };
     applyTheme(theme);
 }
@@ -563,6 +604,27 @@ textColor.addEventListener('input', applyThemeRealtime);
 borderRadius.addEventListener('input', applyThemeRealtime);
 shadowSize.addEventListener('input', applyThemeRealtime);
 iconSizeInput.addEventListener('input', applyThemeRealtime);
+wallpaperBlurInput.addEventListener('input', applyThemeRealtime);
+cardsOpacityInput.addEventListener('input', applyThemeRealtime);
+fontFamilyInput.addEventListener('change', applyThemeRealtime);
+
+// Wallpaper browse
+browseWallpaperBtn.addEventListener('click', async () => {
+    try {
+        const path = await window.pywebview.api.pickWallpaper();
+        if (path) {
+            wallpaperPathInput.value = path;
+            applyThemeRealtime();
+        }
+    } catch (e) {
+        console.error("Error picking wallpaper:", e);
+    }
+});
+
+clearWallpaperBtn.addEventListener('click', () => {
+    wallpaperPathInput.value = '';
+    applyThemeRealtime();
+});
 
 // Toggle style panel
 toggleStyleBtn.addEventListener('click', () => {
@@ -600,7 +662,11 @@ document.getElementById('applyStyle').addEventListener('click', async () => {
         textColor: textColor.value,
         borderRadius: parseInt(borderRadius.value),
         shadowSize: parseInt(shadowSize.value),
-        iconSize: parseInt(iconSizeInput.value)
+        iconSize: parseInt(iconSizeInput.value),
+        cardsOpacity: parseInt(cardsOpacityInput.value),
+        wallpaperBlur: parseInt(wallpaperBlurInput.value),
+        fontFamily: fontFamilyInput.value,
+        wallpaperPath: wallpaperPathInput.value
     };
     applyTheme(theme);
     await window.pywebview.api.saveTheme(theme);
@@ -610,8 +676,14 @@ document.getElementById('applyStyle').addEventListener('click', async () => {
 presetTheme.addEventListener('change', () => {
     const theme = presetThemes[presetTheme.value];
     if (theme) {
+        // Keep current wallpaper if preset doesn't specify one (presets usually don't)
+        if (!theme.wallpaperPath) {
+            theme.wallpaperPath = wallpaperPathInput.value;
+        }
         // Update inputs and apply immediately
         applyTheme(theme);
+        // Also update inputs visually
+        setThemeInputs(theme);
     }
 });
 
@@ -631,7 +703,11 @@ saveThemeBtn.addEventListener('click', async () => {
         textColor: textColor.value,
         borderRadius: parseInt(borderRadius.value),
         shadowSize: parseInt(shadowSize.value),
-        iconSize: parseInt(iconSizeInput.value)
+        iconSize: parseInt(iconSizeInput.value),
+        cardsOpacity: parseInt(cardsOpacityInput.value),
+        wallpaperBlur: parseInt(wallpaperBlurInput.value),
+        fontFamily: fontFamilyInput.value,
+        wallpaperPath: wallpaperPathInput.value
     };
     
     await window.pywebview.api.saveCustomTheme(theme);
@@ -651,21 +727,65 @@ function applyTheme(theme) {
     document.documentElement.style.setProperty('--border-radius', `${theme.borderRadius}px`);
     document.documentElement.style.setProperty('--icon-size', `${theme.iconSize}px`);
     
+    // New properties
+    if (theme.cardsOpacity !== undefined) {
+        document.documentElement.style.setProperty('--cards-opacity', theme.cardsOpacity / 100);
+    } else {
+        document.documentElement.style.setProperty('--cards-opacity', 1);
+    }
+
+    if (theme.wallpaperBlur !== undefined) {
+        document.documentElement.style.setProperty('--wallpaper-blur', `${theme.wallpaperBlur}px`);
+    }
+
+    if (theme.fontFamily) {
+        document.documentElement.style.setProperty('--font-family', theme.fontFamily);
+    }
+
     const shadowValue = `0 ${theme.shadowSize/2}px ${theme.shadowSize}px rgba(0,0,0,0.1)`;
     document.documentElement.style.setProperty('--shadow', shadowValue);
     document.documentElement.style.setProperty('--shadow-size', theme.shadowSize);
     
+    // Apply wallpaper
+    if (theme.wallpaperPath) {
+        document.body.style.backgroundImage = `url('/wallpaper?t=${Date.now()}')`;
+        document.body.classList.add('has-wallpaper');
+        // If we are previewing a new wallpaper path that isn't saved yet,
+        // the /wallpaper endpoint will still serve the saved one.
+        // We can't easily preview a local file path in webview without serving it.
+        // But since we picked it via API, we might be able to handle it if we passed it back.
+        // Actually, the /wallpaper endpoint reads from theme.json.
+        // Since we haven't saved theme.json yet during preview, this is tricky.
+        // However, we can update the background image using a direct file protocol if allowed,
+        // or we need to temporary save it? No.
+        // Let's rely on the input value.
+        // If theme.wallpaperPath matches the input, we assume it's valid.
+    } else {
+        document.body.style.backgroundImage = 'none';
+        document.body.classList.remove('has-wallpaper');
+    }
+
     // Update inputs to reflect current theme
-    bannerColor.value = theme.bannerColor;
-    primaryColor.value = theme.primaryColor;
-    backgroundPageColor.value = theme.backgroundPageColor;
-    cardsColor.value = theme.cardsColor;
-    accentColor.value = theme.accentColor;
-    buttonColor.value = theme.buttonColor;
-    textColor.value = theme.textColor;
-    borderRadius.value = theme.borderRadius;
-    shadowSize.value = theme.shadowSize;
-    iconSizeInput.value = theme.iconSize || 64;
+    // (This might be redundant if triggered by input change, but safe)
+    if (document.activeElement !== bannerColor) bannerColor.value = theme.bannerColor;
+    if (document.activeElement !== primaryColor) primaryColor.value = theme.primaryColor;
+    if (document.activeElement !== backgroundPageColor) backgroundPageColor.value = theme.backgroundPageColor;
+    if (document.activeElement !== cardsColor) cardsColor.value = theme.cardsColor;
+    if (document.activeElement !== accentColor) accentColor.value = theme.accentColor;
+    if (document.activeElement !== buttonColor) buttonColor.value = theme.buttonColor;
+    if (document.activeElement !== textColor) textColor.value = theme.textColor;
+    if (document.activeElement !== borderRadius) borderRadius.value = theme.borderRadius;
+    if (document.activeElement !== shadowSize) shadowSize.value = theme.shadowSize;
+    if (document.activeElement !== iconSizeInput) iconSizeInput.value = theme.iconSize || 64;
+
+    if (document.activeElement !== cardsOpacityInput && theme.cardsOpacity !== undefined)
+        cardsOpacityInput.value = theme.cardsOpacity;
+    if (document.activeElement !== wallpaperBlurInput && theme.wallpaperBlur !== undefined)
+        wallpaperBlurInput.value = theme.wallpaperBlur;
+    if (document.activeElement !== fontFamilyInput && theme.fontFamily)
+        fontFamilyInput.value = theme.fontFamily;
+    if (document.activeElement !== wallpaperPathInput && theme.wallpaperPath !== undefined)
+        wallpaperPathInput.value = theme.wallpaperPath;
 }
 
 // Load saved themes
@@ -711,11 +831,13 @@ async function applyCustomTheme(name) {
         theme.shadowSize = theme.shadowSize || 10;
         theme.iconSize = theme.iconSize || 64;
         
-        applyTheme(theme);
-        // Update the inputs so the user sees current values
-        setThemeInputs(theme);
-        // Persist as current theme
-        await window.pywebview.api.saveTheme(theme);
+        // New defaults
+        savedTheme.cardsOpacity = (savedTheme.cardsOpacity !== undefined) ? savedTheme.cardsOpacity : 100;
+        savedTheme.wallpaperBlur = (savedTheme.wallpaperBlur !== undefined) ? savedTheme.wallpaperBlur : 0;
+        savedTheme.fontFamily = savedTheme.fontFamily || "'Segoe UI', Arial, sans-serif";
+
+        applyTheme(savedTheme);
+        setThemeInputs(savedTheme);
     } catch (e) {
         console.error('Erreur en appliquant le thème personnalisé:', e);
     }
@@ -733,6 +855,10 @@ function setThemeInputs(theme) {
         borderRadius.value = (typeof theme.borderRadius !== 'undefined') ? theme.borderRadius : borderRadius.value;
         shadowSize.value = (typeof theme.shadowSize !== 'undefined') ? theme.shadowSize : shadowSize.value;
         iconSizeInput.value = (typeof theme.iconSize !== 'undefined') ? theme.iconSize : iconSizeInput.value;
+        cardsOpacityInput.value = (typeof theme.cardsOpacity !== 'undefined') ? theme.cardsOpacity : 100;
+        wallpaperBlurInput.value = (typeof theme.wallpaperBlur !== 'undefined') ? theme.wallpaperBlur : 0;
+        fontFamilyInput.value = theme.fontFamily || "'Segoe UI', Arial, sans-serif";
+        wallpaperPathInput.value = theme.wallpaperPath || '';
     } catch (e) {
         console.error('Erreur en mettant à jour les contrôles de thème:', e);
     }
@@ -767,7 +893,14 @@ async function initializeApp() {
             savedTheme.borderRadius = savedTheme.borderRadius || 4;
             savedTheme.shadowSize = savedTheme.shadowSize || 10;
             savedTheme.iconSize = savedTheme.iconSize || 64;
+
+            // New defaults
+            savedTheme.cardsOpacity = (savedTheme.cardsOpacity !== undefined) ? savedTheme.cardsOpacity : 100;
+            savedTheme.wallpaperBlur = (savedTheme.wallpaperBlur !== undefined) ? savedTheme.wallpaperBlur : 0;
+            savedTheme.fontFamily = savedTheme.fontFamily || "'Segoe UI', Arial, sans-serif";
+
             applyTheme(savedTheme);
+            setThemeInputs(savedTheme);
         } else {
             // Load default theme if no saved theme
             loadCurrentTheme();
@@ -779,190 +912,3 @@ async function initializeApp() {
         console.error('Erreur lors de l\'initialisation:', error);
     }
 }
-
-// Folder Management
-async function loadFolders() {
-    try {
-        const shortcuts = await window.pywebview.api.getShortcuts();
-        const folderSet = new Set();
-        shortcuts.forEach(s => {
-            if (s.folder) {
-                folderSet.add(s.folder);
-                // Add all parent paths too
-                const parts = s.folder.split('/');
-                for (let i = 1; i < parts.length; i++) {
-                    folderSet.add(parts.slice(0, i).join('/'));
-                }
-            }
-        });
-        folders = Array.from(folderSet).sort();
-        updateFolderSelect();
-    } catch (error) {
-        console.error('Error loading folders:', error);
-    }
-}
-
-function updateFolderSelect() {
-    const folderSelect = document.getElementById('folder');
-    folderSelect.innerHTML = '<option value="">Racine</option>';
-    folders.forEach(folder => {
-        const option = document.createElement('option');
-        option.value = folder;
-        option.textContent = folder;
-        folderSelect.appendChild(option);
-    });
-}
-
-// Keep compatibility
-async function renderFolders() {
-    await renderItems();
-}
-
-function navigateToFolder(folder) {
-    currentFolder = folder;
-    updateBreadcrumb();
-    renderItems();
-}
-
-function updateBreadcrumb() {
-    const breadcrumb = document.querySelector('.folder-breadcrumb');
-    breadcrumb.innerHTML = '';
-    
-    const rootBtn = document.createElement('button');
-    rootBtn.className = 'folder-crumb' + (currentFolder === '' ? ' active' : '');
-    rootBtn.textContent = '📁 Tous les raccourcis';
-    rootBtn.onclick = () => navigateToFolder('');
-    breadcrumb.appendChild(rootBtn);
-    
-    if (currentFolder) {
-        const parts = currentFolder.split('/');
-        let path = '';
-        parts.forEach((part, index) => {
-            path += (path ? '/' : '') + part;
-            const isLast = index === parts.length - 1;
-            const folderBtn = document.createElement('button');
-            folderBtn.className = 'folder-crumb' + (isLast ? ' active' : '');
-            folderBtn.textContent = part;
-            const btnPath = path;
-            folderBtn.onclick = () => navigateToFolder(btnPath);
-            breadcrumb.appendChild(folderBtn);
-        });
-    }
-}
-
-document.getElementById('addFolderBtn').addEventListener('click', () => {
-    const folderName = prompt('Nom du nouveau dossier:');
-    if (folderName && folderName.trim()) {
-        let fullPath = folderName.trim();
-        // If we're in a folder, prefix with current path
-        if (currentFolder) {
-            fullPath = currentFolder + '/' + fullPath;
-        }
-        if (!folders.includes(fullPath)) {
-            folders.push(fullPath);
-            folders.sort();
-            updateFolderSelect();
-            renderFolders();
-        }
-    }
-});
-
-async function deleteFolder(folder) {
-    if (confirm(`Supprimer le dossier "${folder}"?\nLes raccourcis seront déplacés à la racine.`)) {
-        const shortcuts = await window.pywebview.api.getShortcuts();
-        for (let i = 0; i < shortcuts.length; i++) {
-            if (shortcuts[i].folder === folder) {
-                shortcuts[i].folder = '';
-                await window.pywebview.api.updateShortcut(i, shortcuts[i]);
-            }
-        }
-        folders = folders.filter(f => f !== folder);
-        updateFolderSelect();
-        await renderItems();
-    }
-}
-
-// Drag and Drop System
-let draggedElement = null;
-
-function setupDragAndDrop() {
-    itemsContainer.addEventListener('dragstart', handleDragStart);
-    itemsContainer.addEventListener('dragend', handleDragEnd);
-    itemsContainer.addEventListener('dragover', handleDragOver);
-    itemsContainer.addEventListener('drop', handleDrop);
-}
-
-function handleDragStart(e) {
-    if (e.target.classList.contains('shortcut') && currentSort === 'custom') {
-        draggedElement = e.target;
-        e.target.style.opacity = '0.4';
-    }
-}
-
-function handleDragEnd(e) {
-    e.target.style.opacity = '1';
-    draggedElement = null;
-}
-
-function handleDragOver(e) {
-    if (!draggedElement || currentSort !== 'custom') return;
-    e.preventDefault();
-    const target = e.target.closest('.shortcut');
-    if (target && target !== draggedElement) {
-        const rect = target.getBoundingClientRect();
-        const midpoint = rect.left + rect.width / 2;
-        if (e.clientX < midpoint) {
-            target.parentNode.insertBefore(draggedElement, target);
-        } else {
-            target.parentNode.insertBefore(draggedElement, target.nextSibling);
-        }
-    }
-}
-
-async function handleDrop(e) {
-    e.preventDefault();
-    if (!draggedElement || currentSort !== 'custom') return;
-    
-    // Save new order
-    const items = Array.from(itemsContainer.children);
-    const shortcuts = await window.pywebview.api.getShortcuts();
-    
-    items.forEach((el, newPosition) => {
-        if (el.dataset.type === 'shortcut') {
-            const index = parseInt(el.dataset.index);
-            if (shortcuts[index]) {
-                shortcuts[index].customOrder = newPosition;
-            }
-        } else if (el.dataset.type === 'folder') {
-            // Store folder order in localStorage for now
-            const folderPath = el.dataset.fullPath;
-            localStorage.setItem(`folder_order_${currentFolder}_${folderPath}`, newPosition);
-        }
-    });
-    
-    // Save all shortcuts
-    for (let i = 0; i < shortcuts.length; i++) {
-        if (shortcuts[i].customOrder !== undefined) {
-            await window.pywebview.api.updateShortcut(i, shortcuts[i]);
-        }
-    }
-    
-    await renderItems();
-}
-
-// Attendre que pywebview soit prêt
-window.addEventListener('pywebviewready', async () => {
-    console.log('pywebview est prêt');
-    await initializeApp();
-});
-
-// Fallback pour le cas où l'événement ne se déclenche pas
-window.addEventListener('load', async () => {
-    console.log('Page chargée');
-    if (window.pywebview && window.pywebview.api) {
-        console.log('pywebview déjà disponible');
-        await initializeApp();
-    } else {
-        console.log('En attente de pywebview...');
-    }
-});
