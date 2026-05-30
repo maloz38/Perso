@@ -1,0 +1,13 @@
+{
+  "openUrlsInApp": true,
+  "urlWindowWidth": 1200,
+  "urlWindowHeight": 800,
+  "urlWindowFullscreen": false,
+  "forceUrlWindowSettings": false,
+  "urlWindowScreen": "primary",
+  "confirmBeforeDelete": true,
+  "showDescriptions": true,
+  "animationsEnabled": true,
+  "maxRecentItems": 10,
+  "debugMode": true
+}

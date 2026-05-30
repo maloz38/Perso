@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de raccourcis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestionnaire de raccourcis</h1>
+            <div class="header-controls">
+                <div class="left-controls">
+                    <button id="toggleFormBtn" class="btn">Ajouter un raccourci</button>
+                    <button id="toggleViewBtn" class="btn">Mode Liste</button>
+                    <button id="toggleReorderBtn" class="btn">Réorganiser</button>
+                    <div class="sort-dropdown">
+                        <button id="sortBtn" class="btn">Trier ▼</button>
+                        <div id="sortMenu" class="sort-menu hidden">
+                            <button data-sort="az">A → Z</button>
+                            <button data-sort="za">Z → A</button>
+                            <button data-sort="recent">Récemment ouvert</button>
+                            <button data-sort="custom">Pertinence</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-controls">
+                    <button id="toggleSettingsBtn" class="btn btn-icon" title="Paramètres">⚙️</button>
+                    <button id="toggleStyleBtn" class="btn">Personnaliser</button>
+                </div>
+            </div>
+
+        </header>
+
+        <!-- Modal de personnalisation -->
+        <div id="stylePanelModal" class="modal-overlay hidden">
+            <div class="modal-content style-modal">
+                <div class="modal-header">
+                    <h3>🎨 Personnalisation</h3>
+                    <button type="button" class="modal-close-btn" data-close-modal="stylePanelModal">×</button>
+                </div>
+                <form id="styleForm">
+                    
+                    <div class="style-tabs">
+                        <button type="button" class="style-tab active" data-tab="colors">Couleurs</button>
+                        <button type="button" class="style-tab" data-tab="typography">Typo</button>
+                        <button type="button" class="style-tab" data-tab="cards">Cartes</button>
+                        <button type="button" class="style-tab" data-tab="banner">Bannière</button>
+                        <button type="button" class="style-tab" data-tab="app">App</button>
+                        <button type="button" class="style-tab" data-tab="themes">Thèmes</button>
+                    </div>
+
+                    <!-- Onglet Couleurs -->
+                    <div class="style-tab-content active" data-tab="colors">
+                        <div class="style-section">
+                            <label>Thème prédéfini</label>
+                            <select id="presetTheme">
+                                <option value="default">Par défaut</option>
+                                <option value="modern">Moderne</option>
+                                <option value="soft">Arrondi nuage</option>
+                                <option value="sharp">Angles vifs</option>
+                                <option value="dark">Sombre</option>
+                            </select>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Couleurs de base</label>
+                            <!-- Bannière -->
+                            <div class="color-picker-advanced">
+                                <label>Bannière:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="banner">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="banner">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="banner">
+                                    <input type="color" id="bannerColor">
+                                    <input type="number" id="bannerOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="banner">
+                                    <button type="button" class="btn-gradient-config" data-target="banner">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="banner"></div>
+                                </div>
+                            </div>
+                            <!-- Fond contenu -->
+                            <div class="color-picker-advanced">
+                                <label>Fond contenu:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="primary">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="primary">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="primary">
+                                    <input type="color" id="primaryColor">
+                                    <input type="number" id="primaryOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="primary">
+                                    <button type="button" class="btn-gradient-config" data-target="primary">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="primary"></div>
+                                </div>
+                            </div>
+                            <!-- Fond page -->
+                            <div class="color-picker-advanced">
+                                <label>Fond page:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="backgroundPage">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="backgroundPage">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="backgroundPage">
+                                    <input type="color" id="backgroundPageColor">
+                                    <input type="number" id="backgroundPageOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="backgroundPage">
+                                    <button type="button" class="btn-gradient-config" data-target="backgroundPage">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="backgroundPage"></div>
+                                </div>
+                            </div>
+                            <!-- Cartes -->
+                            <div class="color-picker-advanced">
+                                <label>Cartes:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="cards">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="cards">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="cards">
+                                    <input type="color" id="cardsColor">
+                                    <input type="number" id="cardsOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="cards">
+                                    <button type="button" class="btn-gradient-config" data-target="cards">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="cards"></div>
+                                </div>
+                            </div>
+                            <!-- Boutons -->
+                            <div class="color-picker-advanced">
+                                <label>Boutons:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="button">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="button">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="button">
+                                    <input type="color" id="buttonColor">
+                                    <input type="number" id="buttonOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="button">
+                                    <button type="button" class="btn-gradient-config" data-target="button">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="button"></div>
+                                </div>
+                            </div>
+                            <!-- Accent -->
+                            <div class="color-picker-advanced">
+                                <label>Accent:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="accent">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="accent">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="accent">
+                                    <input type="color" id="accentColor">
+                                    <input type="number" id="accentOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="accent">
+                                    <button type="button" class="btn-gradient-config" data-target="accent">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="accent"></div>
+                                </div>
+                            </div>
+                            <!-- Champs -->
+                            <div class="color-picker-advanced">
+                                <label>Champs:</label>
+                                <div class="color-mode-toggle">
+                                    <button type="button" class="color-mode-btn active" data-mode="solid" data-target="input">Uni</button>
+                                    <button type="button" class="color-mode-btn" data-mode="gradient" data-target="input">Dégradé</button>
+                                </div>
+                                <div class="color-input-group color-solid-inputs" data-target="input">
+                                    <input type="color" id="inputColor">
+                                    <input type="number" id="inputOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité %">
+                                </div>
+                                <div class="color-gradient-inputs hidden" data-target="input">
+                                    <button type="button" class="btn-gradient-config" data-target="input">⚙️ Configurer le dégradé</button>
+                                    <div class="gradient-mini-preview" data-target="input"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Typographie -->
+                    <div class="style-tab-content" data-tab="typography">
+                        <div class="style-section">
+                            <label>Police globale</label>
+                            <select id="globalFont">
+                                <option value="'Segoe UI', Arial, sans-serif">Segoe UI (défaut)</option>
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Poppins', sans-serif">Poppins</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="'Courier New', monospace">Courier New</option>
+                                <option value="Consolas, monospace">Consolas</option>
+                            </select>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Titres (H1, H2, H3)</label>
+                            <div class="typography-group">
+                                <select id="titleFont">
+                                    <option value="inherit">Hériter</option>
+                                    <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                    <option value="'Poppins', sans-serif">Poppins</option>
+                                    <option value="Georgia, serif">Georgia</option>
+                                </select>
+                                <input type="color" id="titleColor" title="Couleur des titres">
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Texte normal</label>
+                            <div class="typography-group">
+                                <select id="bodyFont">
+                                    <option value="inherit">Hériter</option>
+                                    <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                    <option value="'Lato', sans-serif">Lato</option>
+                                </select>
+                                <input type="color" id="textColor" title="Couleur du texte">
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Descriptions / Sous-texte</label>
+                            <div class="typography-group">
+                                <select id="descFont">
+                                    <option value="inherit">Hériter</option>
+                                    <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="italic">Italique</option>
+                                </select>
+                                <input type="color" id="descColor" title="Couleur des descriptions">
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Boutons</label>
+                            <div class="typography-group">
+                                <select id="buttonFont">
+                                    <option value="inherit">Hériter</option>
+                                    <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                </select>
+                                <input type="color" id="buttonTextColor" title="Couleur texte boutons">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Cartes -->
+                    <div class="style-tab-content" data-tab="cards">
+                        <h4 style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">📋 Mode Grille (liste)</h4>
+                        
+                        <div class="style-section">
+                            <label>Style des bordures</label>
+                            <select id="borderStyle">
+                                <option value="solid">Solide</option>
+                                <option value="dashed">Tirets</option>
+                                <option value="dotted">Pointillés</option>
+                                <option value="double">Double</option>
+                                <option value="groove">Rainure</option>
+                                <option value="ridge">Crête</option>
+                                <option value="none">Aucune</option>
+                            </select>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Épaisseur bordure</label>
+                            <div class="slider-with-value">
+                                <input type="range" id="borderWidth" min="0" max="10" value="1">
+                                <span class="slider-val" id="borderWidthVal">1</span><span>px</span>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Couleur bordure</label>
+                            <div class="color-input-group">
+                                <input type="color" id="borderColor" value="#dddddd">
+                                <input type="range" id="borderOpacity" min="0" max="100" value="100" class="opacity-slider" title="Opacité %">
+                                <span class="slider-val" id="borderOpacityVal">100</span><span>%</span>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Arrondi des coins</label>
+                            <div class="slider-with-value">
+                                <input type="range" id="borderRadius" min="0" max="50" value="4">
+                                <span class="slider-val" id="borderRadiusVal">4</span><span>px</span>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Taille de l'ombre</label>
+                            <div class="slider-with-value">
+                                <input type="range" id="shadowSize" min="0" max="50" value="10">
+                                <span class="slider-val" id="shadowSizeVal">10</span><span>px</span>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Taille des icônes</label>
+                            <div class="slider-with-value">
+                                <input type="range" id="iconSize" min="0" max="256" value="64">
+                                <span class="slider-val" id="iconSizeVal">64</span><span>px</span>
+                            </div>
+                            <p class="hint-text">💡 Mettre à 0 pour masquer les icônes</p>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showGridIcons" checked>
+                                <span>Afficher les icônes</span>
+                            </label>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showTypeBadge" checked>
+                                <span>Afficher le badge de type (🌐 URL)</span>
+                            </label>
+                        </div>
+                        
+                        <h4 style="margin-top: 25px; margin-bottom: 15px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 15px 0 10px 0;">🏠 Mode Dashboard (tuiles)</h4>
+                        
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showDashboardIcons" checked>
+                                <span>Afficher les icônes des tuiles</span>
+                            </label>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label>⚙️ Options par défaut des tuiles</label>
+                            <p class="hint-text">Ces paramètres s'appliquent aux nouvelles tuiles créées</p>
+                            
+                            <div class="tile-defaults-list">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="defaultShowName" checked>
+                                    <span>Afficher le nom par défaut</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="defaultShowCount">
+                                    <span>Afficher le compteur par défaut</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="defaultShowBorder">
+                                    <span>Afficher la bordure par défaut</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label>🔒 Options disponibles dans l'éditeur de tuile</label>
+                            <p class="hint-text">Décochez pour masquer des options dans le modal d'édition</p>
+                            
+                            <div class="tile-options-visibility">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionShowName" checked>
+                                    <span>Option "Afficher le nom"</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionShowCount" checked>
+                                    <span>Option "Afficher le compteur"</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionTextCustomization" checked>
+                                    <span>Personnalisation du texte</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionBorder" checked>
+                                    <span>Options de bordure</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionBackground" checked>
+                                    <span>Image de fond</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionColor" checked>
+                                    <span>Couleur de fond</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionIconSize" checked>
+                                    <span>Taille de l'icône</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="optionBorderRadius" checked>
+                                    <span>Arrondi des coins</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Bannière -->
+                    <div class="style-tab-content" data-tab="banner">
+                        <div class="style-section">
+                            <label>Boutons système</label>
+                            <p class="hint-text">💡 Cochez les boutons à afficher et réorganisez-les par glisser-déposer</p>
+                            <div id="bannerButtonsList" class="banner-buttons-list">
+                                <!-- Généré dynamiquement -->
+                            </div>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label>Boutons personnalisés</label>
+                            <p class="hint-text">Ajoutez des raccourcis, thèmes ou liens rapides à la bannière</p>
+                            <div id="customBannerButtonsList" class="banner-buttons-list">
+                                <!-- Généré dynamiquement -->
+                            </div>
+                            <button type="button" id="addCustomBannerBtn" class="btn btn-small" style="margin-top: 10px;">➕ Ajouter un bouton</button>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label>Position des boutons</label>
+                            <div class="banner-layout-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="bannerLayout" value="split" checked>
+                                    <span>Gauche / Droite</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="bannerLayout" value="left">
+                                    <span>Tout à gauche</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="bannerLayout" value="right">
+                                    <span>Tout à droite</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="bannerLayout" value="center">
+                                    <span>Centré</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showAppTitle" checked>
+                                <span>Afficher le titre de l'application</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Application -->
+                    <div class="style-tab-content" data-tab="app">
+                        <div class="style-section">
+                            <label>Nom de l'application</label>
+                            <input type="text" id="appName" class="style-input" value="" placeholder="Laisser vide pour aucun titre">
+                            <span class="hint-text">💡 Laisser vide pour masquer le titre de la fenêtre</span>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Icône de l'application</label>
+                            <div class="app-icon-picker">
+                                <img id="appIconPreview" src="" alt="Icône" class="app-icon-preview">
+                                <button type="button" id="pickAppIcon" class="btn btn-small">📁 Choisir une icône</button>
+                                <button type="button" id="resetAppIcon" class="btn btn-small">🔄 Réinitialiser</button>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="startFullscreen">
+                                <span>🖥️ Démarrer maximisé</span>
+                            </label>
+                        </div>
+
+                        <div class="style-section" id="screenSelectSection">
+                            <label>Écran de démarrage</label>
+                            <select id="startScreen" class="style-input">
+                                <option value="0">Écran principal</option>
+                                <option value="1">Écran 1</option>
+                                <option value="2">Écran 2</option>
+                                <option value="3">Écran 3</option>
+                            </select>
+                            <span class="hint-text">💡 L'écran sera utilisé si disponible</span>
+                        </div>
+
+                        <div class="style-section" id="windowSizeSection">
+                            <label>Taille de la fenêtre au démarrage</label>
+                            <div class="window-size-inputs">
+                                <div class="size-input-group">
+                                    <label>Largeur:</label>
+                                    <input type="number" id="windowWidth" min="400" max="3840" value="1000">
+                                    <span>px</span>
+                                </div>
+                                <div class="size-input-group">
+                                    <label>Hauteur:</label>
+                                    <input type="number" id="windowHeight" min="300" max="2160" value="800">
+                                    <span>px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Taille minimale de la fenêtre</label>
+                            <div class="window-size-inputs">
+                                <div class="size-input-group">
+                                    <label>Largeur min:</label>
+                                    <input type="number" id="windowMinWidth" min="0" max="1920" value="800">
+                                    <span>px</span>
+                                </div>
+                                <div class="size-input-group">
+                                    <label>Hauteur min:</label>
+                                    <input type="number" id="windowMinHeight" min="0" max="1080" value="600">
+                                    <span>px</span>
+                                </div>
+                            </div>
+                            <span class="hint-text">💡 Mettre 0 pour désactiver la taille minimale</span>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Zoom de l'interface</label>
+                            <div class="zoom-controls">
+                                <button type="button" id="zoomOut" class="btn btn-small">−</button>
+                                <input type="number" id="zoomLevel" min="50" max="200" value="100" step="10">
+                                <span>%</span>
+                                <button type="button" id="zoomIn" class="btn btn-small">+</button>
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: 20px; margin-bottom: 15px; border-top: 1px solid var(--border-color); padding-top: 20px;">🌐 Fenêtres URL (liens web)</h4>
+
+                        <div class="style-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="themeUrlWindowFullscreen">
+                                <span>🖥️ Ouvrir les URLs maximisées</span>
+                            </label>
+                        </div>
+
+                        <div class="style-section">
+                            <label>Écran cible pour les URLs</label>
+                            <select id="themeUrlWindowScreen" class="style-input">
+                                <option value="primary">Écran principal</option>
+                                <option value="1">Écran 1</option>
+                                <option value="2">Écran 2</option>
+                                <option value="3">Écran 3</option>
+                            </select>
+                        </div>
+
+                        <div class="style-section" id="themeUrlWindowSizeSection">
+                            <label>Taille des fenêtres URL</label>
+                            <div class="window-size-inputs">
+                                <div class="size-input-group">
+                                    <label>Largeur:</label>
+                                    <input type="number" id="themeUrlWindowWidth" min="400" max="3840" value="1200">
+                                    <span>px</span>
+                                </div>
+                                <div class="size-input-group">
+                                    <label>Hauteur:</label>
+                                    <input type="number" id="themeUrlWindowHeight" min="300" max="2160" value="800">
+                                    <span>px</span>
+                                </div>
+                            </div>
+                            <span class="hint-text">💡 Ces paramètres écrasent les réglages globaux pour ce thème</span>
+                        </div>
+
+                        <div class="style-section">
+                            <p class="info-text">💡 Les paramètres de fenêtre seront appliqués au prochain démarrage.</p>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Thèmes -->
+                    <div class="style-tab-content" data-tab="themes">
+                        <div class="themes-section">
+                            <h4>Sauvegarder le thème actuel</h4>
+                            <div class="save-theme">
+                                <input type="text" id="themeName" placeholder="Nom du thème">
+                                <button type="button" id="saveTheme" class="btn">Sauvegarder</button>
+                            </div>
+                        </div>
+
+                        <div class="themes-section">
+                            <h4>Thèmes sauvegardés</h4>
+                            <div id="savedThemes" class="saved-themes">
+                                <!-- Les thèmes sauvegardés seront ajoutés ici -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" id="applyStyle" class="btn primary">✓ Appliquer</button>
+                        <button type="button" id="closeStyle" class="btn">Fermer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+            <!-- Modal dégradé -->
+            <div id="gradientModal" class="modal-overlay hidden">
+                <div class="modal-content gradient-modal">
+                    <div class="modal-header">
+                        <h3>🎨 Créer un dégradé</h3>
+                        <button type="button" class="modal-close-btn" data-close-modal="gradientModal">×</button>
+                    </div>
+                    <div class="gradient-preview" id="gradientPreview"></div>
+                    
+                    <div class="gradient-controls">
+                        <div class="gradient-type-row">
+                            <div class="gradient-type">
+                                <label>Type:</label>
+                                <select id="gradientType">
+                                    <option value="linear">Linéaire</option>
+                                    <option value="radial">Radial</option>
+                                    <option value="conic">Conique</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Sélecteur d'angle circulaire -->
+                        <div class="gradient-angle-section" id="gradientAngleSection">
+                            <label>Angle:</label>
+                            <div class="angle-picker-container">
+                                <div class="angle-picker" id="anglePicker">
+                                    <div class="angle-picker-dial" id="anglePickerDial"></div>
+                                    <div class="angle-picker-handle" id="anglePickerHandle"></div>
+                                </div>
+                                <div class="angle-input-group">
+                                    <input type="number" id="gradientAngle" min="0" max="360" value="90">
+                                    <span>°</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Liste des couleurs avec positions -->
+                        <div class="gradient-colors-section">
+                            <div class="gradient-colors-header">
+                                <label>Couleurs:</label>
+                                <button type="button" id="addColorStop" class="btn btn-small">+ Ajouter</button>
+                            </div>
+                            <div class="gradient-colors-list" id="gradientColorsList">
+                                <!-- Les color stops seront ajoutés dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" id="applyGradient" class="btn primary">Appliquer</button>
+                        <button type="button" id="removeGradient" class="btn">Couleur unie</button>
+                        <button type="button" id="cancelGradient" class="btn">Annuler</button>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Modal de paramètres -->
+        <div id="settingsPanelModal" class="modal-overlay hidden">
+            <div class="modal-content settings-modal">
+                <div class="modal-header">
+                    <h3>⚙️ Paramètres</h3>
+                    <button type="button" class="modal-close-btn" data-close-modal="settingsPanelModal">×</button>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>🌐 Liens Web</h4>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="openUrlsInApp" checked>
+                        <span class="toggle-label">Ouvrir les URLs dans l'application</span>
+                    </label>
+                    <p class="settings-hint">Si désactivé, les liens s'ouvriront dans votre navigateur par défaut</p>
+                    
+                    <div id="urlWindowSettings" class="settings-subsection">
+                        <label class="settings-toggle">
+                            <input type="checkbox" id="urlWindowFullscreen">
+                            <span class="toggle-label">🖥️ Ouvrir maximisé (par défaut)</span>
+                        </label>
+                        
+                        <div id="urlWindowSizeSettings" class="settings-row">
+                            <label>Taille par défaut:</label>
+                            <div class="settings-inputs">
+                                <input type="number" id="urlWindowWidth" value="1200" min="400" max="3840"> × 
+                                <input type="number" id="urlWindowHeight" value="800" min="300" max="2160"> px
+                            </div>
+                        </div>
+                        
+                        <label class="settings-toggle">
+                            <input type="checkbox" id="forceUrlWindowSettings">
+                            <span class="toggle-label">🔒 Ignorer les paramètres du thème</span>
+                        </label>
+                        <p class="settings-hint">Si activé, les paramètres ci-dessus seront utilisés au lieu de ceux définis dans chaque thème</p>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>📋 Comportement</h4>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="confirmBeforeDelete" checked>
+                        <span class="toggle-label">Confirmer avant suppression</span>
+                    </label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="showDescriptions" checked>
+                        <span class="toggle-label">Afficher les descriptions</span>
+                    </label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="animationsEnabled" checked>
+                        <span class="toggle-label">Activer les animations</span>
+                    </label>
+                </div>
+
+                <div class="settings-section">
+                    <h4>🔧 Avancé</h4>
+                    <div class="settings-row">
+                        <label>Éléments récents max:</label>
+                        <input type="number" id="maxRecentItems" value="10" min="1" max="50" class="settings-input-small">
+                    </div>
+                    <button type="button" id="showAllItemsBtn" class="btn" style="margin-top: 15px; width: 100%;">📋 Afficher tous les éléments</button>
+                    <p class="settings-hint">Voir et rechercher tous les raccourcis et dossiers</p>
+                </div>
+
+                <div class="settings-section">
+                    <h4>🐛 Mode Développeur</h4>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="debugMode">
+                        <span class="toggle-label">Activer le mode debug</span>
+                    </label>
+                    <p class="settings-hint">Affiche les outils de développement (DevTools) et les informations de débogage</p>
+                    <button type="button" id="openDevToolsBtn" class="btn" style="margin-top: 10px; width: 100%; display: none;">🔧 Ouvrir DevTools (F12)</button>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="saveSettings" class="btn primary">💾 Enregistrer</button>
+                    <button type="button" id="closeSettings" class="btn">Fermer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal d'ajout de raccourci -->
+        <div id="addShortcutModal" class="modal-overlay hidden">
+            <div class="modal-content add-shortcut-modal">
+                <div class="modal-header">
+                    <h3>➕ Ajouter un raccourci</h3>
+                    <button type="button" class="modal-close-btn" data-close-modal="addShortcutModal">×</button>
+                </div>
+                <form id="addShortcutForm">
+                    <div class="edit-form-content">
+                        <div class="edit-preview-side">
+                            <div class="edit-preview">
+                                <img id="previewIcon" src="" alt="">
+                                <span id="previewName">Nouveau raccourci</span>
+                            </div>
+                        </div>
+                        <div class="edit-fields-side">
+                            <div class="form-group">
+                                <label for="name">Nom *</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="path">Chemin du fichier *</label>
+                                <div class="input-with-button">
+                                    <input type="text" id="path" required placeholder="Chemin du fichier ou URL (ex: Uplay://...)">
+                                    <button type="button" id="browseFile" class="btn btn-small">📁</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Dossiers</label>
+                                <div id="folderCheckboxes" class="folder-checkboxes">
+                                    <label class="folder-checkbox-item">
+                                        <input type="checkbox" value="" checked>
+                                        <span>🏠 Racine</span>
+                                    </label>
+                                    <!-- Les autres dossiers seront ajoutés dynamiquement -->
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="iconPath">Icône</label>
+                                <div class="input-with-button">
+                                    <input type="text" id="iconPath" placeholder="Chemin de l'icône">
+                                    <button type="button" id="browseIcon" class="btn btn-small">🖼️</button>
+                                </div>
+                            </div>
+
+                            <!-- Option pour les URLs -->
+                            <div class="form-group url-options hidden" id="urlOptionsGroup">
+                                <label>Comportement du lien</label>
+                                <div class="url-behavior-options compact">
+                                    <label class="radio-option"><input type="radio" name="urlBehavior" value="default" checked><span>Par défaut</span></label>
+                                    <label class="radio-option"><input type="radio" name="urlBehavior" value="app"><span>🪟 App</span></label>
+                                    <label class="radio-option"><input type="radio" name="urlBehavior" value="browser"><span>🌐 Navigateur</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn primary">➕ Ajouter</button>
+                        <button type="button" class="btn" id="cancelForm">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Navigation des dossiers - Toujours visible -->
+        <div id="folderNav" class="folder-navigation">
+            <div class="folder-breadcrumb">
+                <button class="folder-crumb" data-folder="">🏠 Accueil</button>
+            </div>
+            <div class="folder-nav-actions">
+                <button id="toggleDashboardModeBtn" class="btn btn-small btn-discrete" title="Mode d'affichage">📊</button>
+                <button id="addFolderBtn" class="btn btn-small">➕ Dossier</button>
+            </div>
+        </div>
+
+        <!-- Écran d'accueil Dashboard -->
+        <div id="homeScreen" class="home-screen">
+            <div class="home-header">
+                <div class="home-header-left">
+                    <h2>Accueil</h2>
+                </div>
+                <div class="home-actions">
+                    <button id="editHomeBtn" class="btn btn-small">✏️ Modifier</button>
+                    <button id="addHomeTileBtn" class="btn btn-small hidden">➕ Tuile</button>
+                    <button id="saveHomeBtn" class="btn btn-small primary hidden">✓ Terminer</button>
+                </div>
+            </div>
+            
+            <!-- Tuiles personnalisées du dashboard -->
+            <div id="homeTilesContainer" class="home-tiles-container">
+                <!-- Les tuiles seront ajoutées dynamiquement -->
+            </div>
+            
+            <!-- Éléments natifs de la racine -->
+            <div id="homeRootItems" class="home-root-items">
+                <!-- Dossiers et raccourcis de la racine -->
+            </div>
+        </div>
+
+        <!-- Conteneur unifié (dossiers + raccourcis) - pour les sous-dossiers -->
+        <div id="itemsContainer" class="grid-view hidden"></div>
+        
+        <!-- Modal pour afficher tous les éléments en vrac -->
+        <div id="allItemsModal" class="modal-overlay hidden">
+            <div class="modal-content all-items-modal">
+                <div class="modal-header">
+                    <h3>📚 Tous les éléments</h3>
+                    <button type="button" class="modal-close-btn" data-close-modal="allItemsModal">×</button>
+                </div>
+                <div class="all-items-header">
+                    <input type="text" id="allItemsSearch" placeholder="Rechercher...">
+                    <div class="all-items-filters">
+                        <button type="button" class="filter-btn active" data-filter="all">Tout</button>
+                        <button type="button" class="filter-btn" data-filter="folders">📁 Dossiers</button>
+                        <button type="button" class="filter-btn" data-filter="shortcuts">🎮 Raccourcis</button>
+                    </div>
+                </div>
+                <div class="all-items-stats" id="allItemsStats">
+                    <!-- Stats dynamiques -->
+                </div>
+                <div id="allItemsList" class="all-items-list">
+                    <!-- Liste dynamique -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="closeAllItems" class="btn">Fermer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal pour déplacer un élément -->
+        <div id="moveShortcutModal" class="modal-overlay hidden">
+            <div class="modal-content move-shortcut-modal">
+                <div class="modal-header">
+                    <h3>📂 Déplacer vers...</h3>
+                    <div class="modal-header-actions">
+                        <button type="button" id="toggleMoveView" class="btn btn-small btn-discrete" title="Basculer vue">☰</button>
+                        <button type="button" class="modal-close-btn" data-close-modal="moveShortcutModal">×</button>
+                    </div>
+                </div>
+                <div id="moveFolderTree" class="move-folder-tree">
+                    <!-- Arborescence des dossiers -->
+                </div>
+                <div id="moveFolderList" class="move-folder-list hidden">
+                    <!-- Liste plate des dossiers (vue alternative) -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="createFolderInMove" class="btn btn-small">+ Nouveau dossier</button>
+                    <button type="button" id="cancelMove" class="btn">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour configurer une tuile -->
+    <div id="tileModal" class="modal-overlay hidden">
+        <div class="modal-content tile-modal">
+            <div class="modal-header">
+                <h3>⚙️ Configurer la tuile</h3>
+                <button type="button" class="modal-close-btn" data-close-modal="tileModal">×</button>
+            </div>
+            <div class="tile-modal-form">
+                <div class="form-group">
+                    <label>Dossier à afficher</label>
+                    <select id="tileFolderSelect">
+                        <!-- Options ajoutées dynamiquement -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Couleur de fond</label>
+                    <div class="color-input-group">
+                        <input type="color" id="tileColor" value="#3498db">
+                        <input type="number" id="tileOpacity" min="0" max="100" value="100" class="opacity-input" title="Opacité (%)">
+                    </div>
+                </div>
+                
+                <div class="form-group slider-row">
+                    <label>Taille icône:</label>
+                    <input type="range" id="tileIconSize" min="1" max="512" value="64" class="slider-input">
+                    <input type="number" id="tileIconSizeInput" class="inline-number-input" min="1" value="64"><span>px</span>
+                </div>
+                
+                <div class="form-group slider-row">
+                    <label>Arrondi:</label>
+                    <input type="range" id="tileBorderRadius" min="0" max="500" value="12" class="slider-input">
+                    <input type="number" id="tileBorderRadiusInput" class="inline-number-input" min="0" value="12"><span>px</span>
+                </div>
+                
+                <div class="form-group tile-checkboxes">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tileShowIcon" checked>
+                        <span>Afficher l'icône</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tileShowName" checked>
+                        <span>Afficher le nom</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tileShowCount">
+                        <span>Afficher le compteur</span>
+                    </label>
+
+                </div>
+                
+                <!-- Options de personnalisation du texte -->
+                <div class="form-group" id="textCustomizationSection">
+                    <label style="margin-bottom: 8px; display: block;">✏️ Personnalisation du texte</label>
+                    <div class="text-customization-panel">
+                        <div class="text-custom-row">
+                            <label>Texte:</label>
+                            <div id="tileRichTextEditor" class="rich-text-editor" contenteditable="true" spellcheck="false"></div>
+                        </div>
+                        <div class="text-custom-row rich-toolbar">
+                            <button type="button" class="rich-btn" data-cmd="bold" title="Gras"><b>G</b></button>
+                            <button type="button" class="rich-btn" data-cmd="italic" title="Italique"><i>I</i></button>
+                            <button type="button" class="rich-btn" data-cmd="underline" title="Souligné"><u>S</u></button>
+                            <button type="button" class="rich-btn" data-cmd="strikethrough" title="Barré"><s>B</s></button>
+                            <span class="toolbar-sep"></span>
+                            <input type="color" class="rich-color-btn" id="richTextColor" value="#ffffff" title="Couleur du texte">
+                            <button type="button" class="rich-btn" data-cmd="applyColor" title="Appliquer couleur">🎨</button>
+                            <input type="color" class="rich-color-btn" id="richBgColor" value="#ffff00" title="Surlignage">
+                            <button type="button" class="rich-btn" data-cmd="highlight" title="Surligner">🖍️</button>
+                            <span class="toolbar-sep"></span>
+                            <button type="button" class="rich-btn" data-cmd="applyShadow" title="Appliquer ombre">🔲</button>
+                            <button type="button" class="rich-btn" data-cmd="applyGlow" title="Appliquer lumière">✨</button>
+                            <button type="button" class="rich-btn" data-cmd="applyOutline" title="Appliquer contour">🔳</button>
+                            <span class="toolbar-sep"></span>
+                            <button type="button" class="rich-btn" data-cmd="clear" title="Effacer">❌</button>
+                        </div>
+                        
+                        <!-- Effets avancés avec sliders -->
+                        <div class="effect-controls">
+                            <div class="effect-group">
+                                <label class="effect-label">
+                                    <input type="checkbox" id="effectShadow">
+                                    <span>🔲 Ombre</span>
+                                </label>
+                                <div class="effect-sliders" id="shadowSliders">
+                                    <div class="mini-slider"><span>X</span><input type="range" id="shadowX" min="-20" max="20" value="2"><span class="slider-val">2</span></div>
+                                    <div class="mini-slider"><span>Y</span><input type="range" id="shadowY" min="-20" max="20" value="2"><span class="slider-val">2</span></div>
+                                    <div class="mini-slider"><span>Flou</span><input type="range" id="shadowBlur" min="0" max="20" value="4"><span class="slider-val">4</span></div>
+                                    <input type="color" id="shadowColor" value="#000000" title="Couleur ombre">
+                                </div>
+                            </div>
+                            <div class="effect-group">
+                                <label class="effect-label">
+                                    <input type="checkbox" id="effectGlow">
+                                    <span>✨ Lumière</span>
+                                </label>
+                                <div class="effect-sliders" id="glowSliders">
+                                    <div class="mini-slider"><span>Taille</span><input type="range" id="glowSize" min="1" max="30" value="10"><span class="slider-val">10</span></div>
+                                    <div class="mini-slider"><span>Intensité</span><input type="range" id="glowIntensity" min="1" max="5" value="2"><span class="slider-val">2</span></div>
+                                    <input type="color" id="glowColor" value="#ffffff" title="Couleur lumière">
+                                </div>
+                            </div>
+                            <div class="effect-group">
+                                <label class="effect-label">
+                                    <input type="checkbox" id="effectOutline">
+                                    <span>🔳 Contour</span>
+                                </label>
+                                <div class="effect-sliders" id="outlineSliders">
+                                    <div class="mini-slider"><span>Épaisseur</span><input type="range" id="outlineWidth" min="1" max="5" value="1"><span class="slider-val">1</span></div>
+                                    <input type="color" id="outlineColor" value="#000000" title="Couleur contour">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-custom-row compact-row">
+                            <label>Police:</label>
+                            <select id="tileFontFamily" class="compact-select">
+                                <option value="inherit">Par défaut</option>
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Poppins', sans-serif">Poppins</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Courier New', monospace">Courier</option>
+                                <option value="Impact, fantasy">Impact</option>
+                            </select>
+                            <button type="button" class="rich-btn" data-cmd="applyFont" title="Appliquer police">📝</button>
+                        </div>
+                        <div class="text-custom-row">
+                            <label>Taille:</label>
+                            <input type="range" id="tileFontSizeSlider" min="8" max="72" value="14" class="range-slider">
+                            <span class="slider-val" id="tileFontSizeVal">14</span><span class="unit">px</span>
+                            <button type="button" class="rich-btn" data-cmd="applySize" title="Appliquer taille">🔤</button>
+                        </div>
+                        <div class="text-custom-row">
+                            <label>Position X:</label>
+                            <input type="range" id="tileTextOffsetX" min="-100" max="100" value="0" class="range-slider">
+                            <span class="slider-val" id="tileTextOffsetXVal">0</span><span class="unit">px</span>
+                        </div>
+                        <div class="text-custom-row">
+                            <label>Position Y:</label>
+                            <input type="range" id="tileTextOffsetY" min="-100" max="100" value="0" class="range-slider">
+                            <span class="slider-val" id="tileTextOffsetYVal">0</span><span class="unit">px</span>
+                        </div>
+                        <div class="text-custom-row compact-row">
+                            <label>Alignement:</label>
+                            <select id="tileTextAlign" class="compact-select">
+                                <option value="center">Centre</option>
+                                <option value="left">Gauche</option>
+                                <option value="right">Droite</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Options de bordure avancées -->
+                <div class="form-group">
+                    <label class="checkbox-label" style="margin-bottom: 10px;">
+                        <input type="checkbox" id="tileShowBorder">
+                        <span>Afficher une bordure</span>
+                    </label>
+                    <div id="borderOptions" class="border-options hidden">
+                        <div class="border-option-row">
+                            <label>Couleur:</label>
+                            <input type="color" id="tileBorderColor" value="#1abc9c">
+                        </div>
+                        <div class="border-option-row">
+                            <label>Épaisseur: <input type="number" id="tileBorderWidthInput" class="inline-number-input" min="1" value="2">px</label>
+                            <input type="range" id="tileBorderWidth" min="1" max="50" value="2" class="slider-input small">
+                        </div>
+                        <div class="border-option-row">
+                            <label>Style:</label>
+                            <select id="tileBorderStyle">
+                                <option value="solid">Solide</option>
+                                <option value="dashed">Tirets</option>
+                                <option value="dotted">Pointillés</option>
+                                <option value="double">Double</option>
+                                <option value="groove">Rainure</option>
+                                <option value="ridge">Crête</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Icône personnalisée (optionnel)</label>
+                    <div class="input-with-button">
+                        <input type="text" id="tileIconPath" placeholder="Chemin de l'icône">
+                        <button type="button" id="browseTileIcon" class="btn">Parcourir</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Image de fond (optionnel)</label>
+                    <div class="input-with-button">
+                        <input type="text" id="tileBackgroundImage" placeholder="Chemin ou URL de l'image">
+                        <button type="button" id="browseTileBackground" class="btn">Parcourir</button>
+                    </div>
+                    <select id="tileBackgroundSize" class="style-input" style="margin-top: 5px;">
+                        <option value="cover">Couvrir</option>
+                        <option value="contain">Contenir</option>
+                        <option value="auto">Auto</option>
+                        <option value="100% 100%">Étirer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="saveTile" class="btn primary">Enregistrer</button>
+                <button type="button" id="deleteTile" class="btn btn-danger">Supprimer</button>
+                <button type="button" id="cancelTile" class="btn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter un élément au dashboard -->
+    <div id="addTileModal" class="modal-overlay hidden">
+        <div class="modal-content add-tile-modal">
+            <div class="modal-header">
+                <h3>➕ Ajouter au dashboard</h3>
+                <button type="button" class="modal-close-btn" data-close-modal="addTileModal">×</button>
+            </div>
+            <div class="add-tile-tabs">
+                <button type="button" class="add-tile-tab active" data-tab="folders">📁 Dossiers</button>
+                <button type="button" class="add-tile-tab" data-tab="shortcuts">🎮 Raccourcis</button>
+            </div>
+            <div class="add-tile-search">
+                <input type="text" id="addTileSearch" placeholder="Rechercher...">
+            </div>
+            <div class="add-tile-list" id="addTileList">
+                <!-- Liste dynamique -->
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancelAddTile" class="btn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ajout bouton bannière personnalisé -->
+    <div id="addBannerButtonModal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>➕ Ajouter un bouton à la bannière</h3>
+                <button type="button" class="modal-close-btn" data-close-modal="addBannerButtonModal">×</button>
+            </div>
+            
+            <div class="style-section">
+                <label>Type de bouton</label>
+                <select id="bannerButtonType" class="style-input">
+                    <option value="shortcut">🎮 Raccourci</option>
+                    <option value="theme">🎨 Thème</option>
+                    <option value="folder">📁 Ouvrir un dossier</option>
+                </select>
+            </div>
+            
+            <div class="style-section" id="bannerButtonShortcutSection">
+                <label>Raccourci</label>
+                <select id="bannerButtonShortcut" class="style-input">
+                    <!-- Généré dynamiquement -->
+                </select>
+            </div>
+            
+            <div class="style-section hidden" id="bannerButtonThemeSection">
+                <label>Thème</label>
+                <select id="bannerButtonTheme" class="style-input">
+                    <!-- Généré dynamiquement -->
+                </select>
+            </div>
+            
+            <div class="style-section hidden" id="bannerButtonFolderSection">
+                <label>Dossier</label>
+                <select id="bannerButtonFolder" class="style-input">
+                    <!-- Généré dynamiquement -->
+                </select>
+            </div>
+            
+            <div class="style-section">
+                <label>Label du bouton</label>
+                <input type="text" id="bannerButtonLabel" class="style-input" placeholder="Ex: Spotify, Thème sombre...">
+            </div>
+            
+            <div class="style-section">
+                <label>Icône (emoji ou texte)</label>
+                <input type="text" id="bannerButtonIcon" class="style-input" placeholder="🎵" maxlength="5">
+            </div>
+            
+            <div class="style-section">
+                <label>Position</label>
+                <select id="bannerButtonPosition" class="style-input">
+                    <option value="left">◀ Gauche</option>
+                    <option value="right">Droite ▶</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" id="confirmAddBannerButton" class="btn primary">Ajouter</button>
+                <button type="button" id="cancelAddBannerButton" class="btn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal personnalisé -->
+    <div id="customModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button type="button" class="modal-close-btn" data-close-modal="customModal">×</button>
+            </div>
+            <p id="modalMessage"></p>
+            <input type="text" id="modalInput" class="modal-input hidden">
+            <div class="modal-actions">
+                <button id="modalConfirm" class="btn primary">OK</button>
+                <button id="modalCancel" class="btn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'édition de raccourci -->
+    <div id="editShortcutModal" class="modal-overlay hidden">
+        <div class="modal-content edit-shortcut-modal">
+            <div class="modal-header">
+                <h3>✏️ Modifier le raccourci</h3>
+                <button type="button" class="modal-close-btn" data-close-modal="editShortcutModal">×</button>
+            </div>
+            <form id="editShortcutForm">
+                <div class="edit-form-content">
+                    <div class="edit-preview-side">
+                        <div class="edit-preview">
+                            <img id="editPreviewIcon" src="" alt="">
+                            <span id="editPreviewName"></span>
+                        </div>
+                    </div>
+                    <div class="edit-fields-side">
+                        <div class="form-group">
+                            <label for="editName">Nom *</label>
+                            <input type="text" id="editName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPath">Chemin *</label>
+                            <div class="input-with-button">
+                                <input type="text" id="editPath" required>
+                                <button type="button" id="editBrowseFile" class="btn btn-small">📁</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Dossiers</label>
+                            <div id="editFolderCheckboxes" class="folder-checkboxes">
+                                <!-- Les dossiers seront ajoutés dynamiquement -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editIconPath">Icône</label>
+                            <div class="input-with-button">
+                                <input type="text" id="editIconPath">
+                                <button type="button" id="editBrowseIcon" class="btn btn-small">🖼️</button>
+                            </div>
+                        </div>
+                        <div class="form-group edit-url-options hidden" id="editUrlOptionsGroup">
+                            <label>Comportement du lien</label>
+                            <div class="url-behavior-options compact">
+                                <label class="radio-option"><input type="radio" name="editUrlBehavior" value="default" checked><span>Par défaut</span></label>
+                                <label class="radio-option"><input type="radio" name="editUrlBehavior" value="app"><span>🪟 App</span></label>
+                                <label class="radio-option"><input type="radio" name="editUrlBehavior" value="browser"><span>🌐 Navigateur</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group edit-automation-section hidden" id="editAutomationGroup">
+                            <label>🤖 Actions automatisées</label>
+                            <p class="hint-text">Exécutées après le chargement de la page</p>
+                            <div id="automationActionsList" class="automation-actions-list"></div>
+                            <div class="automation-buttons">
+                                <button type="button" id="recordAutomationActions" class="btn btn-small btn-record">🎬 Enregistrer</button>
+                                <button type="button" id="addAutomationAction" class="btn btn-small">➕ Action manuelle</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDescription">Description</label>
+                            <textarea id="editDescription" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn primary">💾 Enregistrer</button>
+                    <button type="button" id="cancelEditShortcut" class="btn">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

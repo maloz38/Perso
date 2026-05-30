@@ -1,0 +1,5 @@
+pywebview
+bottle
+pillow
+pywin32
+requests

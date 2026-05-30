@@ -1,0 +1,136 @@
+{
+  "bannerColor": "#1a1a2e",
+  "primaryColor": "#16213e",
+  "backgroundPageColor": "#0f0f1a",
+  "cardsColor": "#1f2940",
+  "accentColor": "#00d26a",
+  "buttonColor": "#00b859",
+  "textColor": "#e8e8e8",
+  "inputColor": "#2a3a5a",
+  "borderRadius": 12,
+  "shadowSize": 15,
+  "iconSize": 64,
+  "showGridIcons": true,
+  "showTypeBadge": false,
+  "bannerOpacity": 100,
+  "primaryOpacity": 100,
+  "backgroundPageOpacity": 100,
+  "cardsOpacity": 100,
+  "buttonOpacity": 100,
+  "accentOpacity": 100,
+  "inputOpacity": 100,
+  "globalFont": "'Segoe UI', Arial, sans-serif",
+  "titleFont": "inherit",
+  "titleColor": "#e8e8e8",
+  "bodyFont": "inherit",
+  "descFont": "inherit",
+  "descColor": "#e8e8e8",
+  "buttonFont": "inherit",
+  "buttonTextColor": "#ffffff",
+  "borderStyle": "solid",
+  "borderWidth": 1,
+  "borderColor": "#000000",
+  "borderColorOpacity": 10,
+  "gradients": {
+    "banner": {
+      "enabled": true,
+      "type": "linear",
+      "angle": 135,
+      "colorStops": [
+        {
+          "color": "#0f3d0f",
+          "opacity": 100,
+          "position": 0
+        },
+        {
+          "color": "#1a1a2e",
+          "opacity": 100,
+          "position": 50
+        },
+        {
+          "color": "#0a2a1a",
+          "opacity": 100,
+          "position": 100
+        }
+      ]
+    },
+    "primary": {
+      "enabled": false,
+      "type": "linear",
+      "angle": 180,
+      "colorStops": []
+    }
+  },
+  "appName": "",
+  "appIcon": "",
+  "appIconPath": "",
+  "windowWidth": 1500,
+  "windowHeight": 800,
+  "windowMinWidth": 0,
+  "windowMinHeight": 0,
+  "zoomLevel": 100,
+  "startFullscreen": true,
+  "startScreen": 0,
+  "themeUrlWindowFullscreen": false,
+  "themeUrlWindowWidth": 1200,
+  "themeUrlWindowHeight": 800,
+  "themeUrlWindowScreen": "primary",
+  "bannerConfig": {
+    "buttons": [
+      {
+        "id": "toggleFormBtn",
+        "label": "➕ Ajouter un raccourci",
+        "visible": true,
+        "position": "left"
+      },
+      {
+        "id": "toggleViewBtn",
+        "label": "📋 Mode Liste/Grille",
+        "visible": true,
+        "position": "left"
+      },
+      {
+        "id": "toggleReorderBtn",
+        "label": "↕️ Réorganiser",
+        "visible": true,
+        "position": "left"
+      },
+      {
+        "id": "sortBtn",
+        "label": "🔤 Trier",
+        "visible": true,
+        "position": "left"
+      },
+      {
+        "id": "toggleSettingsBtn",
+        "label": "⚙️ Paramètres",
+        "visible": true,
+        "position": "right"
+      },
+      {
+        "id": "toggleStyleBtn",
+        "label": "🎨 Personnaliser",
+        "visible": true,
+        "position": "right"
+      }
+    ],
+    "customButtons": [],
+    "layout": "split",
+    "showTitle": true
+  },
+  "tileDefaults": {
+    "showName": true,
+    "showCount": false,
+    "showBorder": false
+  },
+  "tileOptionsVisibility": {
+    "showName": true,
+    "showCount": true,
+    "textCustomization": true,
+    "border": true,
+    "background": true,
+    "color": true,
+    "iconSize": true,
+    "borderRadius": true
+  }
+}

@@ -1,0 +1,314 @@
+[
+  {
+    "name": "KSP",
+    "path": "d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "description": "Kerbal Space Programe",
+    "folder": "Jeux",
+    "customOrder": 1,
+    "lastOpened": 0
+  },
+  {
+    "name": "Minecraft",
+    "path": "d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe",
+    "description": "Tlauncher",
+    "folder": "Jeux",
+    "customOrder": 6,
+    "lastOpened": 0
+  },
+  {
+    "name": "Steam",
+    "path": "d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": 3,
+    "lastOpened": 1766335611046
+  },
+  {
+    "name": "Poly Bridge 2",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe",
+    "description": "des ponts",
+    "folder": "Jeux",
+    "customOrder": 8,
+    "lastOpened": 1767227481160
+  },
+  {
+    "name": "Hero Hour",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe",
+    "description": "Des Heros qui se déplacent sur des case en tour par tour",
+    "folder": "Jeux",
+    "customOrder": 7,
+    "lastOpened": 1766345879780
+  },
+  {
+    "name": "Those Games",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe",
+    "description": "plein de jeux de pubs",
+    "folder": "Jeux",
+    "customOrder": 9,
+    "lastOpened": 0
+  },
+  {
+    "name": "Raft",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe",
+    "description": "Un bateau a agrandir et un requin qui mange ce bateau",
+    "folder": "Jeux",
+    "customOrder": 5,
+    "lastOpened": 0
+  },
+  {
+    "name": "Portal 2",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.ico",
+    "description": "Des portails partout",
+    "folder": "Jeux",
+    "customOrder": 10,
+    "lastOpened": 0
+  },
+  {
+    "name": "Little Nightmares",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe",
+    "description": "Des petit (ou pas) cauchemars",
+    "folder": "Jeux",
+    "customOrder": 4,
+    "lastOpened": 1766422641405
+  },
+  {
+    "name": "Captain of Industry",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "description": "polluer tout",
+    "folder": "Jeux",
+    "customOrder": 2,
+    "lastOpened": 1767794548890
+  },
+  {
+    "name": "VS Code",
+    "path": "d:\\malo\\truc_technique\\.taf\\code\\Microsoft VS Code\\Code.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.taf\\code\\Microsoft VS Code\\Code.exe",
+    "description": "pour tout coder",
+    "folder": "Taf/Code",
+    "customOrder": null,
+    "lastOpened": 1767874635340,
+    "type": "file",
+    "openInApp": null
+  },
+  {
+    "name": "Peak",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Peak\\PEAK\\PEAK.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Peak\\PEAK\\PEAK.exe",
+    "description": "Jeux co-op",
+    "folder": "Jeux"
+  },
+  {
+    "name": "The Stanley Parable Ultra Deluxe",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The stanley parable\\The Stanley Parable Ultra Deluxe\\The Stanley Parable Ultra Deluxe.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The stanley parable\\The Stanley Parable Ultra Deluxe\\The Stanley Parable Ultra Deluxe.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1767021452571
+  },
+  {
+    "name": "The planet crafter",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The planet crafter\\The Planet Crafter\\Planet Crafter.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The planet crafter\\The Planet Crafter\\Planet Crafter.exe",
+    "description": "",
+    "folder": "Jeux"
+  },
+  {
+    "name": "The Last Worker",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The last worker\\The Last Worker\\The Last Worker.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\The last worker\\The Last Worker\\The Last Worker.exe",
+    "description": "",
+    "folder": "Jeux/jeux finis",
+    "customOrder": null,
+    "lastOpened": 0
+  },
+  {
+    "name": "Terraria",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Terraria\\Terraria\\Terraria.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Terraria\\Terraria\\Terraria.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1766932150889
+  },
+  {
+    "name": "Tales from the Borderlands",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Tales from the Borderlands\\Tales from the Borderlands\\Borderlands.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Tales from the Borderlands\\Tales from the Borderlands\\Borderlands.exe",
+    "description": "",
+    "folder": "Jeux"
+  },
+  {
+    "name": "Shapez 2",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Shapez.2.Early.Access\\shapez 2.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Shapez.2.Early.Access\\shapez 2.exe",
+    "description": "",
+    "folder": "Jeux"
+  },
+  {
+    "name": "Pine Hearts",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Pine hearts\\Pine Hearts\\PineHearts.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Pine hearts\\Pine Hearts\\PineHearts.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1766180052879
+  },
+  {
+    "name": "Garry's mod",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Garry's mod\\GarrysMod\\SmartSteamLoader.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Garry's mod\\GarrysMod\\garrysmod\\resource\\game.ico",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 0
+  },
+  {
+    "name": "Civilization V",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Civilization V\\Civilization V\\CivilizationV_DX11.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\Civilization V\\Civilization V\\CivilizationV_DX11.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1766173341167
+  },
+  {
+    "name": "My Little Universe",
+    "path": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\My Little Universe\\My Little Universe v1.5.0\\My Little Universe.exe",
+    "iconPath": "d:\\malo\\truc_technique\\.jeux\\jeux divers\\My Little Universe\\My Little Universe v1.5.0\\My Little Universe.exe",
+    "description": "",
+    "folder": "Jeux"
+  },
+  {
+    "name": "Tor",
+    "path": "d:\\malo\\truc_technique\\Tor Browser\\Browser\\firefox.exe",
+    "iconPath": "d:\\malo\\truc_technique\\Tor Browser\\Browser\\firefox.exe",
+    "description": "",
+    "folder": "Outils",
+    "customOrder": null,
+    "lastOpened": 1767886156476,
+    "type": "file",
+    "openInApp": null
+  },
+  {
+    "name": "Ubisoft",
+    "path": "D:\\malo\\truc_technique\\.jeux\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe",
+    "description": "",
+    "folder": "Jeux"
+  },
+  {
+    "name": "Lossless Scaling",
+    "path": "D:\\malo\\truc_technique\\.jeux\\Lossless scaling\\Lossless Scaling\\LosslessScaling.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\Lossless scaling\\Lossless Scaling\\LosslessScaling.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1767794547811
+  },
+  {
+    "name": "Hollow knight",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Hollow knight\\Hollow Knight v1.5.78.11833\\Hollow Knight.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Hollow knight\\Hollow Knight v1.5.78.11833\\Hollow Knight.exe",
+    "description": "",
+    "folder": "Jeux",
+    "customOrder": null,
+    "lastOpened": 1767356583067
+  },
+  {
+    "name": "Spotify",
+    "path": "C:\\Users\\Admin\\AppData\\Roaming\\Spotify\\Spotify.exe",
+    "iconPath": "C:\\Users\\Admin\\AppData\\Roaming\\Spotify\\Spotify.exe",
+    "description": "",
+    "folder": ""
+  },
+  {
+    "name": "Netflix",
+    "path": "https://www.netflix.com",
+    "iconPath": "https://www.netflix.com",
+    "description": "",
+    "folder": "",
+    "type": "url",
+    "openInApp": null
+  },
+  {
+    "name": "LMArena",
+    "path": "https://lmarena.ai/fr",
+    "iconPath": "https://lmarena.ai/fr",
+    "description": "",
+    "folders": [
+      "Outils"
+    ],
+    "customOrder": null,
+    "lastOpened": 1767985554064,
+    "type": "url",
+    "openInApp": null
+  },
+  {
+    "name": "Opera1",
+    "path": "d:\\malo\\truc_technique\\Fraude\\Opera\\Opera1\\opera.exe",
+    "iconPath": "d:\\malo\\truc_technique\\Fraude\\Opera\\Opera1\\opera.exe",
+    "description": "08/01/26",
+    "folders": [
+      "Outils"
+    ],
+    "customOrder": null,
+    "lastOpened": 1768845182198,
+    "type": "file",
+    "openInApp": null
+  },
+  {
+    "name": "VS Code1",
+    "path": "d:\\malo\\truc_technique\\Fraude\\Microsoft VS Code\\Microsoft VS Code1\\Code.exe",
+    "iconPath": "d:\\malo\\truc_technique\\Fraude\\Microsoft VS Code\\Microsoft VS Code1\\Code.exe",
+    "description": "08/01/2026",
+    "folder": "Taf/Code",
+    "customOrder": null,
+    "lastOpened": 1767877056083,
+    "type": "file",
+    "openInApp": null
+  },
+  {
+    "name": "Youtube",
+    "path": "https://www.youtube.com/",
+    "iconPath": "https://www.youtube.com/",
+    "description": "",
+    "folder": "",
+    "type": "url",
+    "openInApp": null
+  },
+  {
+    "name": "Pronote",
+    "path": "https://0690128p.index-education.net/pronote/eleve.html?identifiant=CjvwzRGF4V7GMw3S",
+    "iconPath": "https://0690128p.index-education.net/pronote/eleve.html?identifiant=CjvwzRGF4V7GMw3S",
+    "description": "",
+    "folders": [
+      "Taf"
+    ],
+    "customOrder": null,
+    "lastOpened": 1768150366151,
+    "type": "url",
+    "openInApp": null
+  },
+  {
+    "name": "Hytale",
+    "path": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Hytale\\Hytale\\HytaleLauncher.exe",
+    "iconPath": "D:\\malo\\truc_technique\\.jeux\\jeux divers\\Hytale\\Hytale\\HytaleLauncher.exe",
+    "description": "",
+    "folders": [
+      "Jeux"
+    ],
+    "type": "file",
+    "openInApp": null
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Netflix",
+    "path": "https://www.netflix.com",
+    "timestamp": 1770976781661
+  },
+  {
+    "name": "Opera1",
+    "path": "d:\\malo\\truc_technique\\Fraude\\Opera\\Opera1\\opera.exe",
+    "timestamp": 1768845182177
+  },
+  {
+    "name": "Pronote",
+    "path": "https://0690128p.index-education.net/pronote/eleve.html?identifiant=CjvwzRGF4V7GMw3S",
+    "timestamp": 1768150365993
+  },
+  {
+    "name": "LMArena",
+    "path": "https://lmarena.ai/fr",
+    "timestamp": 1767985553839
+  },
+  {
+    "name": "Spotify",
+    "path": "C:\\Users\\Admin\\AppData\\Roaming\\Spotify\\Spotify.exe",
+    "timestamp": 1767980342198
+  },
+  {
+    "name": "Youtube",
+    "path": "https://www.youtube.com/",
+    "timestamp": 1767946753453
+  },
+  {
+    "name": "Tor",
+    "path": "d:\\malo\\truc_technique\\Tor Browser\\Browser\\firefox.exe",
+    "timestamp": 1767886156081
+  }
+]

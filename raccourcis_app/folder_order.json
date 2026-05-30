@@ -1,0 +1,59 @@
+{
+  "Taf": 0,
+  "Taf/Code": [
+    "shortcut:d:\\malo\\truc_technique\\Fraude\\Microsoft VS Code\\Microsoft VS Code1\\Code.exe",
+    "shortcut:d:\\malo\\truc_technique\\.taf\\code\\Microsoft VS Code\\Code.exe"
+  ],
+  "": [
+    "folder:Taf",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Peak\\PEAK\\PEAK.exe",
+    "folder:jeux finis",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\The stanley parable\\The Stanley Parable Ultra Deluxe\\The Stanley Parable Ultra Deluxe.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\The planet crafter\\The Planet Crafter\\Planet Crafter.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Terraria\\Terraria\\Terraria.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Tales from the Borderlands\\Tales from the Borderlands\\Borderlands.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Shapez.2.Early.Access\\shapez 2.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Pine hearts\\Pine Hearts\\PineHearts.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Civilization V\\Civilization V\\CivilizationV_DX11.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\My Little Universe\\My Little Universe v1.5.0\\My Little Universe.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Garry's mod\\GarrysMod\\SmartSteamLoader.exe"
+  ],
+  "Jeux": [
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\Steam\\steamapps\\common\\Kerbal Space Program\\Launcher.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\minecraft\\TLauncher.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\Steam\\steam.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Poly-Bridge 2\\Poly Bridge 2 v1.63\\Poly Bridge 2.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Heros.Hour.v2.6.0-SteamGG.net\\Hero's Hour.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Those Games\\THOSE GAMES.exe",
+    "shortcut:D:\\malo\\truc_technique\\.jeux\\jeux divers\\Raft\\V1.05b_Raft_Wind32.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Portal 2\\portal2.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Little Nightmares\\Atlas\\Binaries\\Win64\\LittleNightmares.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Captain of Industry\\Captain of Industry\\Captain of Industry.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Peak\\PEAK\\PEAK.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\The stanley parable\\The Stanley Parable Ultra Deluxe\\The Stanley Parable Ultra Deluxe.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\The planet crafter\\The Planet Crafter\\Planet Crafter.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Terraria\\Terraria\\Terraria.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Tales from the Borderlands\\Tales from the Borderlands\\Borderlands.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Shapez.2.Early.Access\\shapez 2.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Pine hearts\\Pine Hearts\\PineHearts.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Garry's mod\\GarrysMod\\SmartSteamLoader.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\Civilization V\\Civilization V\\CivilizationV_DX11.exe",
+    "shortcut:d:\\malo\\truc_technique\\.jeux\\jeux divers\\My Little Universe\\My Little Universe v1.5.0\\My Little Universe.exe",
+    "shortcut:d:\\malo\\truc_technique\\Tor Browser\\Browser\\firefox.exe"
+  ],
+  "null": [
+    "folder:Jeux",
+    "folder:Taf",
+    "folder:jeux finis"
+  ]
+}

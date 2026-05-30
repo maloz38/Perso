@@ -1,0 +1,94 @@
+[
+  {
+    "folderId": "Taf",
+    "size": "medium",
+    "gridColumn": 1,
+    "gridRow": 1
+  },
+  {
+    "type": "folder",
+    "folderId": "Jeux",
+    "x": 325,
+    "y": 0,
+    "width": 200,
+    "height": 150
+  },
+  {
+    "type": "folder",
+    "folderId": "Outils",
+    "x": 620,
+    "y": 88,
+    "width": 200,
+    "height": 150
+  },
+  {
+    "type": "shortcut",
+    "shortcutName": "Spotify",
+    "x": 323,
+    "y": 207,
+    "width": 200,
+    "height": 150
+  },
+  {
+    "type": "shortcut",
+    "shortcutName": "Netflix",
+    "x": 20,
+    "y": 377,
+    "width": 200,
+    "height": 150
+  },
+  {
+    "type": "folder",
+    "folderId": "__recent__",
+    "x": 965,
+    "y": 58,
+    "width": 200,
+    "height": 150,
+    "color": "#3498db",
+    "opacity": 0,
+    "iconSize": 512,
+    "fontSize": 14,
+    "borderRadius": 12,
+    "showName": true,
+    "showCount": true,
+    "iconOverflow": false,
+    "showBorder": false,
+    "borderColor": "#1abc9c",
+    "borderWidth": 2,
+    "borderStyle": "solid",
+    "richTextHtml": "<b style=\"\">R<i>é</i></b><i>c<u>e</u></i><u>m</u><strike style=\"\"><u>m</u>e<font color=\"#6b0000\">n</font></strike><font color=\"#e60a0a\">t <span style=\"background-color: rgb(232, 232, 79);\">o</span></font><span style=\"background-color: rgb(232, 232, 79);\">u</span><span style=\"text-shadow: rgba(0, 0, 0, 0.7) 2px 2px 4px;\"><span style=\"background-color: rgb(232, 232, 79);\">v</span></span><span style=\"-webkit-text-stroke: 1px currentcolor;\"><span style=\"text-shadow: rgba(0, 0, 0, 0.7) 2px 2px 4px;\">e</span>rt</span>",
+    "customText": "Récemment ouvert",
+    "fontFamily": "'Segoe UI', sans-serif",
+    "textOffsetX": 0,
+    "textOffsetY": 0,
+    "textAlign": "center",
+    "effects": {
+      "shadow": {
+        "enabled": true,
+        "x": 8,
+        "y": 20,
+        "blur": 4,
+        "color": "#190000"
+      },
+      "glow": {
+        "enabled": true,
+        "size": 30,
+        "intensity": 1,
+        "color": "#ffffff"
+      },
+      "outline": {
+        "enabled": true,
+        "width": 1,
+        "color": "#000000"
+      }
+    }
+  },
+  {
+    "type": "shortcut",
+    "shortcutName": "Youtube",
+    "x": 551,
+    "y": 434,
+    "width": 200,
+    "height": 150
+  }
+]
